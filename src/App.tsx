@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Flame, Check, X, Share2, Award } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
@@ -101,7 +102,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>("active");
   const badgeRef = useRef<HTMLDivElement>(null);
 
-  // Simulate prediction resolution
   useEffect(() => {
     const interval = setInterval(() => {
       setPredictions((prev) =>
@@ -129,7 +129,7 @@ export default function App() {
                 setTotalPoints((prev) => prev + points);
                 toast.success(`Prediction "${p.text}" resolved: ${result}! You ${isCorrect ? "gained" : "lost"} ${Math.abs(points)} points.`, {
                   duration: 4000,
-                  style: { background: "#1a202c", color: "#fff" },
+                  style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
                 });
               }
             }
@@ -142,13 +142,12 @@ export default function App() {
     return () => clearInterval(interval);
   }, [userVotes, pointsHistory]);
 
-  // Notify on streak milestones
   useEffect(() => {
     const streak = getStreak();
     if (streak === 3 || streak === 7 || streak === 14) {
       toast.success(`🔥 ${streak}-day streak achieved! Keep it up!`, {
         duration: 4000,
-        style: { background: "#1a202c", color: "#fff" },
+        style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
       });
     }
   }, [votingHistory]);
@@ -164,7 +163,7 @@ export default function App() {
   const handleVote = useCallback((id: number, type: "up" | "down") => {
     if (hasVoted(id) || Date.now() - predictions.find((p) => p.id === id)!.createdAt >= EXPIRY_TIME) {
       toast.error("You already voted or this prediction has expired!", {
-        style: { background: "#1a202c", color: "#fff" },
+        style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
       });
       return;
     }
@@ -190,14 +189,14 @@ export default function App() {
     }
 
     toast.success(`Voted ${type === "up" ? "Yes" : "No"} on "${predictions.find((p) => p.id === id)!.text}"!`, {
-      style: { background: "#1a202c", color: "#fff" },
+      style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
     });
   }, [predictions, userVotes, votingHistory]);
 
   const handleSubmit = useCallback(() => {
     if (!newPrediction.trim() || !selectedCategory) {
       toast.error("Please enter a prediction and select a category!", {
-        style: { background: "#1a202c", color: "#fff" },
+        style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
       });
       return;
     }
@@ -215,7 +214,7 @@ export default function App() {
     setNewPrediction("");
     setSelectedCategory("");
     toast.success("Prediction submitted!", {
-      style: { background: "#1a202c", color: "#fff" },
+      style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
     });
   }, [newPrediction, selectedCategory, username]);
 
@@ -323,7 +322,7 @@ export default function App() {
   const handleSaveProfile = useCallback(() => {
     if (!username.trim()) {
       toast.error("Username cannot be empty!", {
-        style: { background: "#1a202c", color: "#fff" },
+        style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
       });
       return;
     }
@@ -334,7 +333,7 @@ export default function App() {
     }
     setIsEditing(false);
     toast.success("Profile updated!", {
-      style: { background: "#1a202c", color: "#fff" },
+      style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
     });
   }, [username]);
 
@@ -355,14 +354,14 @@ export default function App() {
         } else {
           navigator.clipboard.writeText(shareText);
           toast.success("Profile link and badge URL copied to clipboard!", {
-            style: { background: "#1a202c", color: "#fff" },
+            style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
           });
         }
       } catch (err) {
         console.error("Share failed:", err);
         navigator.clipboard.writeText(shareText);
         toast.success("Profile link copied to clipboard!", {
-          style: { background: "#1a202c", color: "#fff" },
+          style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
         });
       }
     }
@@ -386,38 +385,38 @@ export default function App() {
   }, [predictions, categoryFilter, filter, activeTab]);
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-6">
+    <div className="min-h-screen bg-gray-900 text-white p-6 font-sans">
       <Toaster position="top-right" />
-      <div className="max-w-xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-6 animate-fade-in">
-          <Flame className="w-10 h-10 mx-auto text-red-500 animate-pulse" />
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">NaWhoKnow 🔥</h1>
-          <p className="text-gray-600 dark:text-gray-300">Make wild predictions, vote, and go viral!</p>
+        <div className="text-center mb-8 animate-fade-in">
+          <Flame className="w-12 h-12 mx-auto text-red-500 animate-pulse" />
+          <h1 className="text-4xl font-extrabold text-white">NaWhoKnow 🔥</h1>
+          <p className="text-gray-400 text-lg">Make bold predictions, vote, and rise to fame!</p>
         </div>
 
         {/* Profile Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">My Profile</h2>
-          <div ref={badgeRef} className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md animate-slide-up">
+          <h2 className="text-2xl font-bold text-white mb-4">My Profile</h2>
+          <div ref={badgeRef} className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 animate-slide-up">
             {isEditing ? (
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <div>
-                  <label className="text-sm text-gray-600 dark:text-gray-300">Username</label>
+                  <label className="text-sm text-gray-400">Username</label>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
-                    className="w-full p-2 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    className="w-full p-3 mt-1 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="Enter username"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600 dark:text-gray-300">Avatar</label>
+                  <label className="text-sm text-gray-400">Avatar</label>
                   <select
                     value={avatar}
                     onChange={(e) => setAvatar(e.target.value)}
-                    className="w-full p-2 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                    className="w-full p-3 mt-1 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
                   >
                     <option value="😎">😎 Cool</option>
                     <option value="🦁">🦁 Lion</option>
@@ -428,45 +427,45 @@ export default function App() {
                     <option value="⚽">⚽ Football</option>
                   </select>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={handleSaveProfile}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-transform transform hover:scale-105"
+                    className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105"
                   >
                     Save
                   </button>
                   <button
                     onClick={() => setIsEditing(false)}
-                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 dark:bg-gray-700 dark:text-white transition-transform transform hover:scale-105"
+                    className="bg-gray-700 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-all transform hover:scale-105"
                   >
                     Cancel
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl animate-bounce">{avatar}</span>
-                  <p className="text-lg font-semibold text-gray-800 dark:text-white">{username}</p>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl animate-bounce">{avatar}</span>
+                  <p className="text-xl font-semibold text-white">{username}</p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300">
+                <p className="text-sm text-gray-400">
                   Total Predictions: {totalPredictions} • Correct: {correctPercentage}% • Points: {totalPoints}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Streak: {streak} days</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">Rank: #{myRank}</p>
+                <p className="text-sm text-gray-400">Streak: {streak} days</p>
+                <p className="text-sm text-gray-400">Rank: #{myRank}</p>
                 {badges.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {badges.map((badge) => (
-                      <div key={badge.name} className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-full text-sm">
+                      <div key={badge.name} className="flex items-center gap-1 bg-yellow-900/50 text-yellow-300 px-3 py-1 rounded-full text-sm">
                         <span>{badge.icon}</span>
                         <span>{badge.name}</span>
                       </div>
                     ))}
                   </div>
                 )}
-                <div className="mt-2">
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-white">Category Stats</h3>
-                  <div className="text-sm text-gray-600 dark:text-gray-300">
+                <div className="mt-4">
+                  <h3 className="text-sm font-semibold text-white">Category Stats</h3>
+                  <div className="text-sm text-gray-400">
                     {["Music", "Politics", "Sports"].map((cat) => (
                       <p key={cat}>
                         {cat}: {categoryStats[cat].total} votes,{" "}
@@ -478,18 +477,18 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-transform transform hover:scale-105"
+                    className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-lg hover:from-red-600 hover:to-red-700 transition-all transform hover:scale-105"
                   >
                     Edit Profile
                   </button>
                   <button
                     onClick={handleShareProfile}
-                    className="flex items-center gap-1 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-transform transform hover:scale-105"
+                    className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105"
                   >
-                    <Share2 className="w-4 h-4" /> Share
+                    <Share2 className="w-5 h-5" /> Share
                   </button>
                 </div>
               </div>
@@ -499,42 +498,25 @@ export default function App() {
 
         {/* Leaderboard */}
         <div className="mb-8 animate-slide-up">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Leaderboard</h2>
-          <div className="flex justify-center gap-2 mb-4 flex-wrap">
-            <button
-              onClick={() => setLeaderboardPeriod("weekly")}
-              className={`px-3 py-1 rounded-full text-sm ${
-                leaderboardPeriod === "weekly"
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-              } transition-transform transform hover:scale-105`}
-            >
-              Weekly
-            </button>
-            <button
-              onClick={() => setLeaderboardPeriod("monthly")}
-              className={`px-3 py-1 rounded-full text-sm ${
-                leaderboardPeriod === "monthly"
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-              } transition-transform transform hover:scale-105`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setLeaderboardPeriod("all-time")}
-              className={`px-3 py-1 rounded-full text-sm ${
-                leaderboardPeriod === "all-time"
-                  ? "bg-red-500 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-              } transition-transform transform hover:scale-105`}
-            >
-              All-Time
-            </button>
+          <h2 className="text-2xl font-bold text-white mb-4">Leaderboard</h2>
+          <div className="flex justify-center gap-3 mb-4 flex-wrap">
+            {["weekly", "monthly", "all-time"].map((period) => (
+              <button
+                key={period}
+                onClick={() => setLeaderboardPeriod(period as LeaderboardPeriod)}
+                className={`px-4 py-2 rounded-full text-sm font-medium ${
+                  leaderboardPeriod === period
+                    ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                    : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+                } transition-all transform hover:scale-105`}
+              >
+                {period.charAt(0).toUpperCase() + period.slice(1)}
+              </button>
+            ))}
             <select
               value={leaderboardCategory}
               onChange={(e) => setLeaderboardCategory(e.target.value as Category)}
-              className="px-3 py-1 rounded-full text-sm bg-gray-200 dark:bg-gray-700 dark:text-white"
+              className="px-4 py-2 rounded-full text-sm bg-gray-800 text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
             >
               <option value="All">All Categories</option>
               <option value="Music">Music</option>
@@ -542,17 +524,17 @@ export default function App() {
               <option value="Sports">Sports</option>
             </select>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {leaderboard.map((entry) => (
               <div
                 key={entry.username}
-                className={`p-3 rounded-lg shadow-sm ${
+                className={`p-4 rounded-lg ${
                   entry.username === username
-                    ? "bg-red-100 dark:bg-red-900"
-                    : "bg-white dark:bg-gray-800"
-                } transition-transform transform hover:scale-105`}
+                    ? "bg-red-900/50"
+                    : "bg-gray-800/80 backdrop-blur-lg border border-gray-700"
+                } transition-all transform hover:scale-105`}
               >
-                <p className="text-sm text-gray-800 dark:text-white">
+                <p className="text-sm text-white">
                   #{entry.rank} {entry.username} - {entry.points} points
                 </p>
               </div>
@@ -561,18 +543,18 @@ export default function App() {
         </div>
 
         {/* New Prediction Input */}
-        <div className="mb-4 animate-slide-up">
+        <div className="mb-8 animate-slide-up">
           <textarea
             value={newPrediction}
             onChange={(e) => setNewPrediction(e.target.value)}
-            placeholder="Make a prediction..."
-            className="w-full p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-400 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
-            rows={3}
+            placeholder="Make a bold prediction..."
+            className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+            rows={4}
           ></textarea>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full p-2 mt-2 rounded-md border border-gray-300 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+            className="w-full p-3 mt-3 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <option value="" disabled>
               Select a category
@@ -584,73 +566,72 @@ export default function App() {
           <button
             onClick={handleSubmit}
             disabled={!newPrediction.trim() || !selectedCategory}
-            className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:bg-gray-400 transition-transform transform hover:scale-105"
+            className="mt-3 w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg hover:from-red-600 hover:to-red-700 disabled:bg-gray-600 transition-all transform hover:scale-105"
           >
             Predict
           </button>
         </div>
 
         {/* Prediction Tabs */}
-        <div className="flex justify-center gap-2 mb-4">
+        <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab("active")}
-            className={`px-3 py-1 rounded-full text-sm ${
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
               activeTab === "active"
-                ? "bg-red-500 text-white"
-                : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-            } transition-transform transform hover:scale-105`}
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            } transition-all transform hover:scale-105`}
           >
             Active Predictions
           </button>
           <button
             onClick={() => setActiveTab("resolved")}
-            className={`px-3 py-1 rounded-full text-sm ${
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
               activeTab === "resolved"
-                ? "bg-red-500 text-white"
-                : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-            } transition-transform transform hover:scale-105`}
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            } transition-all transform hover:scale-105`}
           >
             Resolved Predictions
           </button>
         </div>
 
         {/* Filters */}
-        <div className="flex justify-center gap-2 mb-6 flex-wrap">
+        <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setFilter("trending")}
-            className={`px-3 py-1 rounded-full text-sm ${
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
               filter === "trending"
-                ? "bg-red-500 text-white"
-                : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-            } transition-transform transform hover:scale-105`}
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            } transition-all transform hover:scale-105`}
           >
             🔥 Trending
           </button>
           <button
             onClick={() => setFilter("latest")}
-            className={`px-3 py-1 rounded-full text-sm ${
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
               filter === "latest"
-                ? "bg-red-500 text-white"
-                : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-            } transition-transform transform hover:scale-105`}
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            } transition-all transform hover:scale-105`}
           >
             🕒 Latest
           </button>
           <button
-  onClick={() => setFilter("ending")}
-  className={`px-3 py-1 rounded-full text-sm ${
-    filter === "ending"
-      ? "bg-red-500 text-white"
-      : "bg-gray-200 dark:bg-gray-700 dark:text-white"
-  } transition-transform transform hover:scale-105`}
->
-  ⌛ Ending Soon
-</button>
-
+            onClick={() => setFilter("ending")}
+            className={`px-4 py-2 rounded-full text-sm font-medium ${
+              filter === "ending"
+                ? "bg-gradient-to-r from-red-500 to-red-600 text-white"
+                : "bg-gray-800 text-gray-300 hover:bg-gray-700"
+            } transition-all transform hover:scale-105`}
+          >
+            ⌛ Ending Soon
+          </button>
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value as Category)}
-            className="px-3 py-1 rounded-full text-sm bg-gray-200 dark:bg-gray-700 dark:text-white"
+            className="px-4 py-2 rounded-full text-sm bg-gray-800 text-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500"
           >
             <option value="All">All Categories</option>
             <option value="Music">Music</option>
@@ -664,35 +645,35 @@ export default function App() {
           {filteredPredictions.map((pred) => (
             <div
               key={pred.id}
-              className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md transition-transform transform hover:scale-105"
+              className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"
             >
-              <p className="text-lg text-gray-800 dark:text-white">{pred.text}</p>
-              <p className="text-sm text-gray-500">{pred.user}</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-lg font-medium text-white">{pred.text}</p>
+              <p className="text-sm text-gray-400">{pred.user}</p>
+              <p className="text-xs text-gray-500 mt-1">
                 {pred.category} • {pred.result ? `Resolved: ${pred.result}` : getTimeLeft(pred.createdAt)}
               </p>
-              <div className="mt-2 flex items-center gap-4">
+              <div className="mt-3 flex items-center gap-4">
                 <button
                   onClick={() => handleVote(pred.id, "up")}
                   disabled={hasVoted(pred.id) || pred.result !== null}
-                  className={`flex items-center gap-1 ${
+                  className={`flex items-center gap-2 text-sm ${
                     getUserVote(pred.id) === "up"
-                      ? "text-green-800 font-bold"
-                      : "text-green-600"
-                  } hover:scale-110 transition disabled:opacity-50 disabled:cursor-not-allowed`}
+                      ? "text-green-400 font-bold"
+                      : "text-green-500"
+                  } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  <Check className="w-4 h-4" /> {pred.upvotes}
+                  <Check className="w-5 h-5" /> {pred.upvotes}
                 </button>
                 <button
                   onClick={() => handleVote(pred.id, "down")}
                   disabled={hasVoted(pred.id) || pred.result !== null}
-                  className={`flex items-center gap-1 ${
+                  className={`flex items-center gap-2 text-sm ${
                     getUserVote(pred.id) === "down"
-                      ? "text-red-800 font-bold"
-                      : "text-red-600"
-                  } hover:scale-110 transition disabled:opacity-50 disabled:cursor-not-allowed`}
+                      ? "text-red-400 font-bold"
+                      : "text-red-500"
+                  } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  <X className="w-4 h-4" /> {pred.downvotes}
+                  <X className="w-5 h-5" /> {pred.downvotes}
                 </button>
                 {hasVoted(pred.id) && pred.result === null && (
                   <span className="text-xs text-gray-500">Vote locked until expiry</span>
@@ -705,17 +686,17 @@ export default function App() {
         {/* Points History */}
         {pointsHistory.length > 0 && (
           <div className="mt-8 animate-slide-up">
-            <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">Points History</h2>
-            <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-white mb-4">Points History</h2>
+            <div className="space-y-3">
               {pointsHistory.map((entry) => (
                 <div
                   key={entry.predictionId}
-                  className="p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-transform transform hover:scale-105"
+                  className="p-4 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"
                 >
-                  <p className="text-sm text-gray-800 dark:text-white">{entry.text}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-white">{entry.text}</p>
+                  <p className="text-xs text-gray-400">
                     Your vote: {entry.vote === "up" ? "Yes" : "No"} • Result: {entry.result} • Points:{" "}
-                    <span className={entry.points >= 0 ? "text-green-600" : "text-red-600"}>
+                    <span className={entry.points >= 0 ? "text-green-400" : "text-red-400"}>
                       {entry.points > 0 ? `+${entry.points}` : entry.points}
                     </span>
                   </p>
@@ -725,5 +706,6 @@ export default function App() {
           </div>
         )}
       </div>
-      </div>
-    )}
+    </div>
+  );
+}
