@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white pt-6 pb-6 px-4 font-sans relative flex flex-col md:flex-row md:justify-between">
+    <div className="min-h-screen overflow-x-hidden bg-gray-900 text-white pt-6 pb-6 px-4 font-sans relative flex flex-col md:flex-row md:justify-between">
       <Toaster position="top-right" />
 
       {/* Desktop: left sidebar (PredictionSpotlight) */}
