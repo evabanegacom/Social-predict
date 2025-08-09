@@ -168,6 +168,10 @@ const getBadges = useCallback(() => {
           <div className="flex items-center gap-3">
             <span className="text-3xl animate-bounce">{avatar}</span>
             <p className="text-xl font-semibold text-white">{username}</p>
+            <p className="text-sm text-gray-300">
+            Daily Streak: 
+            <span className="font-bold text-blue-400">{user?.streak} 🔥</span>
+            </p>
           </div>
           <p className="text-sm text-gray-400">
             Total Predictions: {totalPredictions} • Correct: {correctPercentage}% • Points: {totalPoints}

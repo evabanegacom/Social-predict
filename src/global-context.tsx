@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext, use } from 'react';
 import apiClient from './lib/api';
 import type { Category, LeaderboardPeriod } from './lib/types';
+import { getMessaging, getToken } from 'firebase/messaging';
+import { firebaseApp } from './lib/firebase';
 
 interface User {
   id: number;
@@ -45,6 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ predictions, setPredictions ] = useState<any[]>([]);
   const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
   const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
+  const firebaseAppConfig = firebaseApp
+
   const getPredictions = async () => {
     try {
       const response = await apiClient.get('/predictions');
@@ -78,6 +82,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     fetchUser();
     getPredictions();
+  }, []);
+
+  const WAP_ID = 'BI_vmKiuuvVEZ_HUaY-UliZmPfEqnewGY_Ius2n5hVcb7OFwAWcdyiyLxyPLVUd3uHHAhz4K1HLblpgdfIXeFl0'
+  useEffect(() => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          const messaging = getMessaging(firebaseApp);
+  
+          getToken(messaging, { vapidKey: WAP_ID })
+            .then((token) => {
+              if (token) {
+                apiClient.post('/users/push_token', { push_token: token });
+              }
+            })
+            .catch((err) => {
+              console.error('Error getting FCM token', err);
+            });
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {

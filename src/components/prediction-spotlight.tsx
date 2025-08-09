@@ -50,9 +50,12 @@ const PredictionSpotlight: React.FC = () => {
               }
             : prev
         );
-        toast.success(`Voted ${type === 'up' ? 'Yes' : 'No'}!`, {
-          style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
-        });
+        // toast.success(`Voted ${type === 'up' ? 'Yes' : 'No'}!`, {
+        //   style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+        // });
+        toast.success(`Voted ${type === "up" ? "Yes" : "No"} on "${predictions.find((p) => p.id === id)!.text}"!`, {
+            style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
+          });
       }
     } catch (error) {
       toast.error('Failed to vote. Please try again.', {
