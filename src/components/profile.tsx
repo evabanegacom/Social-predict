@@ -1,5 +1,5 @@
 import { Share2 } from 'lucide-react'
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { useFetchVotes, useLeaderboard } from '../hooks';
 import type { Badge } from '../lib/types';
 import { useAuth } from '../global-context';
@@ -21,6 +21,8 @@ const Profile = () => {
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
+
+    console.log({currentUser, leaderboard, userVotes, categoryStats});
     const handleSaveProfile = () => {
         // Logic to save profile changes
         setIsEditing(false);
@@ -31,14 +33,49 @@ const Profile = () => {
     const correctVotes = userVotes.filter(vote => vote.isCorrect).length;
     const correctPercentage = totalPredictions > 0 ? ((correctVotes / totalPredictions) * 100).toFixed(1) : "0.0";
     const totalPoints = userVotes.reduce((total, vote) => total + (vote.points || 0), 0);
-    const streak = userVotes.reduce((count, vote, index, arr) => {
-        if (index === 0 || vote.isCorrect !== arr[index - 1].isCorrect) {
-            return count + 1;
+
+    const getStreak = useCallback(() => {
+        if (userVotes.length === 0) return 0;
+      
+        // Sort by vote date (most recent first)
+        const sortedVotes = [...userVotes].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
+      
+        let streak = 1;
+        for (let i = 1; i < sortedVotes.length; i++) {
+          const prevVote = sortedVotes[i - 1];
+          const currVote = sortedVotes[i];
+      
+          const prevDay = new Date(prevVote.date).setHours(0, 0, 0, 0);
+          const currDay = new Date(currVote.date).setHours(0, 0, 0, 0);
+      
+          // Check for consecutive days AND same correctness
+          if (
+            prevVote.isCorrect === currVote.isCorrect &&
+            prevDay - currDay === 24 * 60 * 60 * 1000
+          ) {
+            streak++;
+          } else {
+            break;
+          }
         }
-        return count;
-    }, 0);
+      
+        return streak;
+      }, [userVotes]);
+      
+    const streak = getStreak();
+
+    useEffect(() => {
+        if (streak == 3 || streak == 7 || streak == 14) {
+            toast.success(`🔥 ${streak}-day streak achieved! Keep it up!`, {
+                duration: 4000,
+                style: { background: "#1f2937", color: "#ffffff", border: "1px solid rgba(255, 255, 255, 0.2)" },
+            });
+        }
+    }, [userVotes, streak]);
 const myRank = (currentUser?.rank ?? (leaderboard.findIndex(u => u.id === currentUser?.id) + 1)) || null;
-    
+
 const getBadges = useCallback(() => {
         const badges: Badge[] = [];
         if (totalPoints >= 100) badges.push({ name: "Rookie", description: "Earned 100 points", icon: "🏆" });
