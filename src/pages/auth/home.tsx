@@ -3,10 +3,13 @@ import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Flame, Check, X, Share2, Award} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import html2canvas from "html2canvas";
-import type { Prediction, UserVote, PointsHistory, User, Badge, Category, Filter, LeaderboardPeriod, Tab } from "../../lib/types"
+import type { Prediction, UserVote, PointHistory, User, Badge, Category, Filter, LeaderboardPeriod, Tab } from "../../lib/types"
 import { DAY_MS, EXPIRY_TIME, MONTH_MS, POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT, WEEK_MS, initialPredictions, initialUsers } from "../../lib/utils";
 import { useAuth } from "../../global-context";
 import Predictions from "../../components/prediction";
+import LeaderBoard from "../../components/leaderBoard";
+import PointsHistory from "../../components/points-history";
+import Profile from "../../components/profile";
 
 
 export default function Home() {
@@ -18,7 +21,7 @@ export default function Home() {
   const [categoryFilter, setCategoryFilter] = useState<Category>("All");
   const [userVotes, setUserVotes] = useState<UserVote[]>([]);
   const [totalPoints, setTotalPoints] = useState(50);
-  const [pointsHistory, setPointsHistory] = useState<PointsHistory[]>([]);
+  const [pointsHistory, setPointsHistory] = useState<PointHistory[]>([]);
   const [users] = useState<User[]>(initialUsers);
   const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
   const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
@@ -323,7 +326,7 @@ export default function Home() {
         </div>
 
         {/* Profile Section */}
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <h2 className="text-2xl font-bold text-white mb-4">My Profile</h2>
           <div ref={badgeRef} className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 animate-slide-up">
             {isEditing ? (
@@ -421,10 +424,12 @@ export default function Home() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
+
+        <Profile />
 
         {/* Leaderboard */}
-        <div className="mb-8 animate-slide-up">
+        {/* <div className="mb-8 animate-slide-up">
           <h2 className="text-2xl font-bold text-white mb-4">Leaderboard</h2>
           <div className="flex justify-center gap-3 mb-4 flex-wrap">
             {["weekly", "monthly", "all-time"].map((period) => (
@@ -467,7 +472,9 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
+
+        <LeaderBoard />
 
         {/* <div className="mb-8 animate-slide-up">
           <textarea
@@ -609,7 +616,7 @@ export default function Home() {
         <Predictions />
 
         {/* Points History */}
-        {pointsHistory.length > 0 && (
+        {/* {pointsHistory.length > 0 && (
           <div className="mt-8 animate-slide-up">
             <h2 className="text-2xl font-bold text-white mb-4">Points History</h2>
             <div className="space-y-3">
@@ -629,7 +636,9 @@ export default function Home() {
               ))}
             </div>
           </div>
-        )}
+        )} */}
+
+        <PointsHistory />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect, useContext, use } from 'react';
 import apiClient from './lib/api';
+import type { Category, LeaderboardPeriod } from './lib/types';
 
 interface User {
   id: number;
@@ -19,6 +20,13 @@ interface AuthContextType {
   predictions: any[];
   setPredictions: React.Dispatch<React.SetStateAction<any[]>>;
   getPredictions: () => Promise<any[]>;
+  totalPoints: number;
+  setTotalPoints: React.Dispatch<React.SetStateAction<number>>;
+  leaderboardPeriod?: LeaderboardPeriod;
+  leaderboardCategory?: Category;
+  setLeaderboardPeriod?: React.Dispatch<React.SetStateAction<LeaderboardPeriod>>;
+  setLeaderboardCategory?: React.Dispatch<React.SetStateAction<Category>>;
+  predictionCategories?: string[];
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,9 +36,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [totalPoints, setTotalPoints] = useState(0);
+  const predictionCategories = ['All', 'Music', 'Politics', 'Sports'];
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(!!user);
   const [ predictions, setPredictions ] = useState<any[]>([]);
+  const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
+  const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
   const getPredictions = async () => {
     try {
       const response = await apiClient.get('/predictions');
@@ -83,7 +95,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated,
         predictions, 
         setPredictions,
-        getPredictions
+        getPredictions,
+        totalPoints,
+        setTotalPoints,
+        leaderboardPeriod,
+        leaderboardCategory,
+        setLeaderboardPeriod,
+        setLeaderboardCategory,
+        predictionCategories
         }}>
       {children}
     </AuthContext.Provider>

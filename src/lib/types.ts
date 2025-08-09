@@ -14,7 +14,7 @@ export interface UserVote {
     voteType: "up" | "down";
   }
   
-export interface PointsHistory {
+export interface PointHistory {
     predictionId: number;
     text: string;
     vote: "up" | "down";
