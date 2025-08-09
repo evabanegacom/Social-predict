@@ -114,12 +114,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (userData: User, token: string) => {
     const user = { ...userData, token };
     setUser(user);
+    setIsAuthenticated(true);
     localStorage.setItem('user', JSON.stringify(user));
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async() => {
+    try {
+      const response = await apiClient.delete('/logout');
+      console.log('Logout response:', response.data);
+      if( response.data.status === 200) {
+        setUser(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        window.location.href = '/'; // Redirect to home page after logout
+      }
+
+    }catch(error) {
+      console.error('Failed to logout:', error);
+    }
+    
   };
 
   const toggleTheme = () => {

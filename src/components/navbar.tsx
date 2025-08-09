@@ -45,7 +45,7 @@ const Navbar: React.FC = () => {
               </div>
               <button
                 onClick={logout}
-                className="flex items-center gap-1 text-sm text-red-500 hover:text-red-600"
+                className="flex cursor-pointer items-center gap-1 text-sm text-red-500 hover:text-red-600"
               >
                 <LogOut size={16} />
                 Logout
@@ -61,7 +61,7 @@ const Navbar: React.FC = () => {
                 Sign In
               </Link>
               <Link
-                to="/"
+                to="/signup"
                 className="bg-blue-600 text-white text-sm px-3 py-1 rounded hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
               >
                 Sign Up

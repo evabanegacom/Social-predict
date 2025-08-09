@@ -28,9 +28,10 @@ const Rewards: React.FC = () => {
         });
       }
     } catch (error) {
-      toast.error('Error fetching rewards. Please try again.', {
-        style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
-      });
+    //   toast.error('Error fetching rewards. Please try again.', {
+    //     style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+    //   });
+    console.log('Error fetching rewards:', error);
     }
   }, []);
 
@@ -85,7 +86,7 @@ const Rewards: React.FC = () => {
         {rewards.length === 0 ? (
           <p className="text-gray-400">No rewards available at the moment.</p>
         ) : (
-          rewards.map((reward) => (
+          rewards.filter((reward) => (user?.points ?? 0) >= reward.points_cost).map((reward) => (
             <div
               key={reward.id}
               className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"

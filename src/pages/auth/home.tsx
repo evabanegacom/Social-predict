@@ -7,22 +7,32 @@ import Header from "../../components/header";
 import Rewards from "../../components/rewards";
 import PredictionSpotlight from "../../components/prediction-spotlight";
 import ActivityFeed from "../../components/activity-feed";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<"main" | "spotlight" | "activity">("main");
 
+  const predictionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Scroll to predictions when component mounts
+    predictionsRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6 font-sans relative">
+    <div className="min-h-screen bg-gray-900 text-white pt-6 pb-6 px-4 font-sans relative flex flex-col md:flex-row md:justify-between">
       <Toaster position="top-right" />
-      {/* Side panels for desktop */}
-      <div className="hidden md:block">
+
+      {/* Desktop: left sidebar (PredictionSpotlight) */}
+      <div className="hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 mt-24">
         <PredictionSpotlight />
-        <ActivityFeed />
       </div>
-      <div className="max-w-2xl mx-auto">
+      
+      {/* Main content centered */}
+      <div className="max-w-2xl mx-auto flex-1 md:mx-0 md:px-8 md:flex md:flex-col md:items-center">
         <Header />
-        {/* Tab navigation for mobile */}
+
+        {/* Mobile tabs */}
         <div className="md:hidden flex justify-center gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab("main")}
@@ -55,13 +65,16 @@ export default function Home() {
             Activity
           </button>
         </div>
-        {/* Content based on active tab */}
+
+        {/* Show content on mobile tabs */}
         {activeTab === "main" && (
           <div className="space-y-8">
             <Profile />
             <LeaderBoard />
             <Rewards />
-            <Predictions />
+            <div ref={predictionsRef}>
+              <Predictions />
+            </div>
             <PointsHistory />
           </div>
         )}
@@ -76,6 +89,12 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Desktop: right sidebar (ActivityFeed) */}
+      <div className="hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 mt-24">
+        <ActivityFeed />
+      </div>
     </div>
   );
 }
+
