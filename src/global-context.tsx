@@ -8,6 +8,7 @@ interface User {
   phone?: string;
   xp: number;
   token?: string;
+  points?: number;
 }
 
 interface AuthContextType {
@@ -27,6 +28,7 @@ interface AuthContextType {
   setLeaderboardPeriod?: React.Dispatch<React.SetStateAction<LeaderboardPeriod>>;
   setLeaderboardCategory?: React.Dispatch<React.SetStateAction<Category>>;
   predictionCategories?: string[];
+  setUser?: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -61,7 +63,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
-    getPredictions()
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await apiClient.get('/users/me'); // Assume endpoint to fetch user data
+          if (response.data.status === 200) {
+            setUser(response.data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+    getPredictions();
   }, []);
 
   useEffect(() => {
@@ -102,7 +118,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         leaderboardCategory,
         setLeaderboardPeriod,
         setLeaderboardCategory,
-        predictionCategories
+        predictionCategories,
+        setUser
         }}>
       {children}
     </AuthContext.Provider>

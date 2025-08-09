@@ -5,6 +5,7 @@ import LeaderBoard from "../../components/leaderBoard";
 import PointsHistory from "../../components/points-history";
 import Profile from "../../components/profile";
 import Header from "../../components/header";
+import Rewards from "../../components/rewards";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <Header />
         <Profile />
         <LeaderBoard />
+        <Rewards />
         <Predictions />
         <PointsHistory />
       </div>

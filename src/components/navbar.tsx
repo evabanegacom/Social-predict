@@ -12,7 +12,8 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         {/* App Name */}
         <Link to="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-          Predictly
+        <h6 className="font-extrabold text-white">NaWhoKnow 🔥</h6>
+
         </Link>
 
         {/* Right Side Controls */}
