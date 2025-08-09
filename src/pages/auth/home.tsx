@@ -1,16 +1,17 @@
 
-import { useEffect, useState, useMemo, useCallback, useRef, useContext } from "react";
+import { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { Flame, Check, X, Share2, Award} from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import html2canvas from "html2canvas";
 import type { Prediction, UserVote, PointsHistory, User, Badge, Category, Filter, LeaderboardPeriod, Tab } from "../../lib/types"
 import { DAY_MS, EXPIRY_TIME, MONTH_MS, POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT, WEEK_MS, initialPredictions, initialUsers } from "../../lib/utils";
 import { useAuth } from "../../global-context";
+import Predictions from "../../components/prediction";
 
 
 export default function Home() {
-//   const { predictions } = useAuth();
-  const [predictions, setPredictions] = useState<Prediction[]>(initialPredictions);
+  // const [predictions, setPredictions] = useState<Prediction[]>(initialPredictions);
+  const {predictions, setPredictions} = useAuth()
   const [newPrediction, setNewPrediction] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [filter, setFilter] = useState<Filter>("trending");
@@ -468,8 +469,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* New Prediction Input */}
-        <div className="mb-8 animate-slide-up">
+        {/* <div className="mb-8 animate-slide-up">
           <textarea
             value={newPrediction}
             onChange={(e) => setNewPrediction(e.target.value)}
@@ -498,7 +498,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Prediction Tabs */}
         <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setActiveTab("active")}
@@ -522,7 +521,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Filters */}
         <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <button
             onClick={() => setFilter("trending")}
@@ -566,7 +564,6 @@ export default function Home() {
           </select>
         </div>
 
-        {/* Predictions List */}
         <div className="space-y-4">
           {filteredPredictions.map((pred) => (
             <div
@@ -607,7 +604,9 @@ export default function Home() {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
+
+        <Predictions />
 
         {/* Points History */}
         {pointsHistory.length > 0 && (

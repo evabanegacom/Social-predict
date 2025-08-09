@@ -17,6 +17,8 @@ interface AuthContextType {
   theme: 'dark' | 'light';
   isAuthenticated?: boolean;
   predictions: any[];
+  setPredictions: React.Dispatch<React.SetStateAction<any[]>>;
+  getPredictions: () => Promise<any[]>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -80,6 +82,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         theme, 
         isAuthenticated,
         predictions, 
+        setPredictions,
+        getPredictions
         }}>
       {children}
     </AuthContext.Provider>
