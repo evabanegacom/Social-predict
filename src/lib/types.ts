@@ -7,6 +7,7 @@ export interface Prediction {
     createdAt: number;
     category: string;
     result: "Yes" | "No" | null;
+    time_left: string;
   }
   
 export interface UserVote {

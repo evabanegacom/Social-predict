@@ -11,6 +11,7 @@ interface User {
   xp: number;
   token?: string;
   points?: number;
+  streak?: number;
 }
 
 interface AuthContextType {
@@ -47,7 +48,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ predictions, setPredictions ] = useState<any[]>([]);
   const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
   const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
-  const firebaseAppConfig = firebaseApp
 
   const getPredictions = async () => {
     try {
