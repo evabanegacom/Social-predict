@@ -74,7 +74,7 @@ const Signup = () => {
               placeholder="Username (optional)"
             />
           </div>
-          <div className={`flex items-center border ${theme === 'dark' ? 'border-[#38444D] bg-[#253341]' : 'border-[#E1E8ED] bg-[#F5F8FA]'} rounded-full p-3`}>
+          {/* <div className={`flex items-center border ${theme === 'dark' ? 'border-[#38444D] bg-[#253341]' : 'border-[#E1E8ED] bg-[#F5F8FA]'} rounded-full p-3`}>
             <Phone size={18} className={`${theme === 'dark' ? 'text-[#8899A6]' : 'text-[#657786]'} mr-2`} />
             <input
               type="text"
@@ -84,7 +84,7 @@ const Signup = () => {
               className={`w-full bg-transparent outline-none ${theme === 'dark' ? 'text-white placeholder-[#8899A6]' : 'text-[#14171A] placeholder-[#657786]'}`}
               placeholder="Phone number (optional)"
             />
-          </div>
+          </div> */}
           <div className={`flex items-center border ${theme === 'dark' ? 'border-[#38444D] bg-[#253341]' : 'border-[#E1E8ED] bg-[#F5F8FA]'} rounded-full p-3`}>
             <Lock size={18} className={`${theme === 'dark' ? 'text-[#8899A6]' : 'text-[#657786]'} mr-2`} />
             <input
@@ -109,7 +109,7 @@ const Signup = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-[#1DA1F2] text-white p-3 rounded-full hover:bg-[#1A91DA] transition-colors font-semibold text-base"
+            className="w-full bg-[#1DA1F2] cursor-pointer text-white p-3 rounded-full hover:bg-[#1A91DA] transition-colors font-semibold text-base"
           >
             Sign Up
           </button>

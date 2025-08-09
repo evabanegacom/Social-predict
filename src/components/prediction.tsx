@@ -14,9 +14,8 @@ const Predictions = () => {
     const [filter, setFilter] = useState<Filter>("trending");
     const [categoryFilter, setCategoryFilter] = useState<Category>("All");
     const {predictions, setPredictions, getPredictions, user} = useAuth()
-    const [votingHistory, setVotingHistory] = useState<number[]>([]);
     const { userVotes, setUserVotes } = useFetchVotes()
-    
+
     const filteredPredictions = useMemo(() => {
         return predictions
           .filter((p) => (activeTab === "active" ? Date.now() - p.createdAt < EXPIRY_TIME : p.result !== null))
@@ -224,7 +223,7 @@ const Predictions = () => {
                 <button
                   onClick={() => handleVote(pred.id, "up")}
                   disabled={hasVoted(pred.id) || pred.result !== null}
-                  className={`flex items-center gap-2 text-sm ${
+                  className={`flex items-center gap-2 cursor-pointer text-sm ${
                     getUserVote(pred.id) === "up"
                       ? "text-green-400 font-bold"
                       : "text-green-500"
@@ -235,7 +234,7 @@ const Predictions = () => {
                 <button
                   onClick={() => handleVote(pred.id, "down")}
                   disabled={hasVoted(pred.id) || pred.result !== null}
-                  className={`flex items-center gap-2 text-sm ${
+                  className={`flex items-center gap-2 text-sm cursor-pointer ${
                     getUserVote(pred.id) === "down"
                       ? "text-red-400 font-bold"
                       : "text-red-500"

@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useContext, use } from 'react';
 import apiClient from './lib/api';
 import type { Category, LeaderboardPeriod } from './lib/types';
+import { getMessaging, getToken } from 'firebase/messaging';
+import { firebaseApp } from './lib/firebase';
 
 interface User {
   id: number;
@@ -8,6 +10,7 @@ interface User {
   phone?: string;
   xp: number;
   token?: string;
+  points?: number;
 }
 
 interface AuthContextType {
@@ -27,6 +30,7 @@ interface AuthContextType {
   setLeaderboardPeriod?: React.Dispatch<React.SetStateAction<LeaderboardPeriod>>;
   setLeaderboardCategory?: React.Dispatch<React.SetStateAction<Category>>;
   predictionCategories?: string[];
+  setUser?: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,6 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ predictions, setPredictions ] = useState<any[]>([]);
   const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
   const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
+  const firebaseAppConfig = firebaseApp
+
   const getPredictions = async () => {
     try {
       const response = await apiClient.get('/predictions');
@@ -61,7 +67,42 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   useEffect(() => {
-    getPredictions()
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          const response = await apiClient.get('/users/me'); // Assume endpoint to fetch user data
+          if (response.data.status === 200) {
+            setUser(response.data.data);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+    getPredictions();
+  }, []);
+
+  const WAP_ID = 'BI_vmKiuuvVEZ_HUaY-UliZmPfEqnewGY_Ius2n5hVcb7OFwAWcdyiyLxyPLVUd3uHHAhz4K1HLblpgdfIXeFl0'
+  useEffect(() => {
+    if ('Notification' in window) {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          const messaging = getMessaging(firebaseApp);
+  
+          getToken(messaging, { vapidKey: WAP_ID })
+            .then((token) => {
+              if (token) {
+                apiClient.post('/users/push_token', { push_token: token });
+              }
+            })
+            .catch((err) => {
+              console.error('Error getting FCM token', err);
+            });
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -73,12 +114,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = (userData: User, token: string) => {
     const user = { ...userData, token };
     setUser(user);
+    setIsAuthenticated(true);
     localStorage.setItem('user', JSON.stringify(user));
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const logout = async() => {
+    try {
+      const response = await apiClient.delete('/logout');
+      console.log('Logout response:', response.data);
+      if( response.data.status === 200) {
+        setUser(null);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        setIsAuthenticated(false);
+        window.location.href = '/'; // Redirect to home page after logout
+      }
+
+    }catch(error) {
+      console.error('Failed to logout:', error);
+    }
+    
   };
 
   const toggleTheme = () => {
@@ -102,7 +157,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         leaderboardCategory,
         setLeaderboardPeriod,
         setLeaderboardCategory,
-        predictionCategories
+        predictionCategories,
+        setUser
         }}>
       {children}
     </AuthContext.Provider>
