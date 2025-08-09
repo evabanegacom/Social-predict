@@ -1,0 +1,134 @@
+FEATURES & USER STORIES (with Acceptance Criteria)
+🔹 1. Onboarding & Registration
+User Story:
+As a guest, I want to register quickly using my phone number or Google so I can start predicting immediately.
+
+Acceptance Criteria:
+
+I can register via phone OTP or Google
+
+I can skip registration to browse predictions
+
+My profile includes username, avatar, points
+
+🔹 2. View Daily Predictions
+User Story:
+As a player, I want to see trending prediction cards (e.g. “Will Rema drop an album before December?”) so I can make quick choices.
+
+Acceptance Criteria:
+
+I see a scrollable list of current prediction cards
+
+Each card shows a topic, vote options (Yes/No/Maybe), and time left
+
+I can filter by category: Music, Politics, Sports, etc.
+
+🔹 3. Make a Prediction
+User Story:
+As a player, I want to vote on a prediction so I can earn points if I’m right.
+
+Acceptance Criteria:
+
+I can tap “Yes” or “No” to submit my vote
+
+I see how many others voted and their choices
+
+I can’t change my vote after submission
+
+My vote gets locked in until the prediction expires
+
+🔹 4. Earn Points
+User Story:
+As a player, I want to earn points when my predictions are correct so I can climb the leaderboard and unlock rewards.
+
+Acceptance Criteria:
+
+I receive points after a prediction ends and I'm correct
+
+I lose no points for incorrect votes (or maybe a few if we want stakes)
+
+I see total points earned and history
+
+🔹 5. Leaderboard
+User Story:
+As a player, I want to see who’s leading in points so I can compete with them and gain clout.
+
+Acceptance Criteria:
+
+I can see weekly, monthly, and all-time leaderboards
+
+I can filter by category (e.g., top in Politics, Sports)
+
+I see my own ranking position clearly
+
+🔹 6. Create a Prediction (Optional for MVP or Phase 2)
+User Story:
+As a confident user, I want to create my own prediction topic so others can vote on it and I can gain influence.
+
+Acceptance Criteria:
+
+I can write a prediction, select options (Yes/No), and expiry time
+
+Admins must approve before it goes live (optional moderation queue)
+
+I earn XP or badges for popular predictions
+
+🔹 7. Claim Rewards
+User Story:
+As a player, I want to redeem my points for real-life rewards like airtime or data so that my effort feels valuable.
+
+Acceptance Criteria:
+
+I can view a rewards store
+
+I can exchange points for airtime/data coupons or badges
+
+I get notified when I successfully redeem
+
+🔹 8. Daily Streaks & Notifications
+User Story:
+As a frequent user, I want to receive daily reminders to make predictions so I can keep earning points and streak bonuses.
+
+Acceptance Criteria:
+
+I get a push notification with the hottest prediction of the day
+
+I see my daily streak counter
+
+Missing a day resets my streak
+
+🔹 9. Profile & Progress
+User Story:
+As a player, I want to view my profile to track my predictions, streaks, and progress.
+
+Acceptance Criteria:
+
+I see total predictions made, correct %, points
+
+I can edit my avatar and username
+
+I can share my profile or leaderboard badge on social media
+
+💻 Admin User Stories (Optional for Launch MVP)
+Feature	Admin Story
+🧮 Manage Predictions	Add, edit, or delete prediction topics
+🛠️ Moderate Submissions	Approve or reject user-submitted predictions
+🎁 Manage Rewards	Upload and manage airtime/data vouchers
+📊 View Analytics	See top predictors, most engaged topics
+
+🪜 Suggested MVP Scope
+Start with these:
+
+Registration/login
+
+Daily predictions (Yes/No)
+
+Voting logic
+
+Points system
+
+Leaderboard
+
+Profile page
+
+Simple reward catalog (manual redemption or via airtime APIs)
