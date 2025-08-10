@@ -51,7 +51,7 @@ const Rewards: React.FC = () => {
     try {
       const response = await apiClient.post(`/rewards/${rewardId}/redeem`);
       if (response.data.status === 200) {
-        setUser((prev) => prev ? { ...prev, points: response.data.data.points_remaining } : prev);
+        setUser((prev) => prev ? { ...prev, points: response?.data?.data?.points_remaining } : prev);
         setRewards((prev) =>
           prev.map((r) => (r.id === rewardId ? { ...r, stock: r.stock - 1 } : r))
         );
