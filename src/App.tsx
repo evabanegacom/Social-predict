@@ -13,7 +13,6 @@ const Dashboard = () => <div>Dashboard (Placeholder)</div>;
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <BrowserRouter>
         <Navbar />
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
@@ -25,7 +24,6 @@ const App: React.FC = () => {
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </Suspense>
-      </BrowserRouter>
     </AuthProvider>
   );
 };

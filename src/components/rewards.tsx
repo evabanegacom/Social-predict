@@ -13,7 +13,7 @@ interface Reward {
 }
 
 const Rewards: React.FC = () => {
-  const { user, setUser, pointsHistory } = useAuth();
+  const { user, setUser, userVotes } = useAuth();
   const [rewards, setRewards] = useState<Reward[]>([]);
 
   const fetchRewards = useCallback(async () => {
@@ -78,8 +78,8 @@ const Rewards: React.FC = () => {
     fetchRewards();
   }, [fetchRewards]);
 console.log({user})
-const totalPoints = pointsHistory.reduce((acc, entry) => acc + entry.points, 0);
-  return (
+const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
+return (
     <div className="mb-8 animate-slide-up">
       <h2 className="text-2xl font-bold text-white mb-4">Rewards Store</h2>
       <p className="text-sm text-gray-400 mb-4">Your Points: {totalPoints ?? 0}</p>

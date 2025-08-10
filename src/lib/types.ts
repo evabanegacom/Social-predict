@@ -1,3 +1,5 @@
+import type { VoteOption } from "./utils";
+
 export interface Prediction {
     id: number;
     text: string;
@@ -11,8 +13,8 @@ export interface Prediction {
   }
   
 export interface UserVote {
-    predictionId: number;
-    voteType: "up" | "down";
+    prediction_id: number;
+    voteType: VoteOption.Yes | VoteOption.No;
   }
   
 export interface PointHistory {
@@ -35,24 +37,6 @@ export interface Badge {
     description: string;
     icon: string;
   }
-
-//   {
-//     "status": 200,
-//     "message": "Predictions retrieved successfully.",
-//     "data": [
-//         {
-//             "id": 1,
-//             "topic": "Will Nigeria hold a peaceful election in 2027?",
-//             "category": "Politics",
-//             "vote_options": {
-//                 "no": 0,
-//                 "yes": 0,
-//                 "maybe": 0
-//             },
-//             "time_left": "160d 0h 44m"
-//         }
-//     ]
-// }
 
 export interface PredictionResponse {
     status: number;

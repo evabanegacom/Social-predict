@@ -13,7 +13,7 @@ const Profile = () => {
     const [username, setUsername] = React.useState(user?.username || "Anonymous");
     const [avatar, setAvatar] = React.useState("😎");
     const { userVotes } = useFetchVotes()
-    const { leaderboard, currentUser, loading, error, refetch } = useLeaderboard(leaderboardPeriod, leaderboardCategory)
+    const { leaderboard, currentUser } = useLeaderboard(leaderboardPeriod, leaderboardCategory)
 
     const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
