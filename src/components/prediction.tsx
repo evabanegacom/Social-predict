@@ -18,7 +18,7 @@ const Predictions = () => {
 
     const filteredPredictions = useMemo(() => {
         return predictions
-          .filter((p) => (activeTab === "active" ? Date.now() - p.createdAt < EXPIRY_TIME : p.result !== null))
+          .filter((p) => (activeTab === "active" ? Date.now() < p.expires_at : p.result !== null))
           .filter((p) => categoryFilter === "All" || p.category === categoryFilter)
           .sort((a, b) => {
             switch (filter) {

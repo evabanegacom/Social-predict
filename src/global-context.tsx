@@ -12,6 +12,7 @@ interface User {
   token?: string;
   points?: number;
   streak?: number;
+  admin?: boolean;
 }
 
 interface AuthContextType {
@@ -42,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return storedUser ? JSON.parse(storedUser) : null;
   });
   const [totalPoints, setTotalPoints] = useState(0);
-  const predictionCategories = ['All', 'Music', 'Politics', 'Sports'];
+  const predictionCategories = ['All', 'Music', 'Politics', 'Sports', 'Other'];
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [ isAuthenticated, setIsAuthenticated ] = useState<boolean>(!!user);
   const [ predictions, setPredictions ] = useState<any[]>([]);

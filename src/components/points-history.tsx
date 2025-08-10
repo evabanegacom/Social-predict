@@ -3,44 +3,49 @@ import { useAuth } from '../global-context';
 import { useFetchVotes } from '../hooks';
 import { EXPIRY_TIME, POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT } from '../lib/utils';
 import toast from 'react-hot-toast';
+import apiClient from '../lib/api';
 
 const PointsHistory = () => {
   const { setPredictions, totalPoints, setTotalPoints } = useAuth();
   const { userVotes } = useFetchVotes();
-
-  // Local state to store resolved prediction history
   const [pointsHistory, setPointsHistory] = useState([]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
       setPredictions((prev) =>
         prev.map((p) => {
-          const expired = Date.now() - p.createdAt >= EXPIRY_TIME;
-          if (expired && p.result === null) {
-            const result = Math.random() > 0.5 ? "Yes" : "No";
+          console.log({p})
+          if (p?.status === 'resolved'  && p.result !== null) {
+            const result = p?.result
 
             const userVote = userVotes.find((vote) => vote.prediction_id === p.id);
+            console.log({userVote})
             if (userVote) {
               const isCorrect =
-                (userVote.voteType === "up" && result === "Yes") ||
-                (userVote.voteType === "down" && result === "No");
+                (userVote?.choice === "Yes" && result === "Yes") ||
+                (userVote?.choice === "No" && result === "No");
 
               const points = isCorrect ? POINTS_FOR_CORRECT : POINTS_FOR_INCORRECT;
 
               // Prevent double-counting the same prediction
               if (!pointsHistory.some((entry) => entry.predictionId === p.id)) {
-                setPointsHistory((prev) => [
-                  ...prev,
-                  {
-                    predictionId: p.id,
-                    text: p.text,
-                    vote: userVote.voteType,
-                    result,
-                    points,
-                    category: p.category,
-                    resolvedAt: Date.now(),
-                  },
-                ]);
+                setPointsHistory((prev) => {
+                  if (prev.some((entry) => entry.predictionId === p.id)) {
+                    return prev; // Already added, don't add again
+                  }
+                  return [
+                    ...prev,
+                    {
+                      predictionId: p.id,
+                      text: p.text,
+                      vote: userVote?.choice,
+                      result,
+                      points,
+                      category: p.category,
+                      resolvedAt: Date.now(),
+                    },
+                  ];
+                });
+                
 
                 setTotalPoints((prev) => prev + points);
 
@@ -64,17 +69,18 @@ const PointsHistory = () => {
           return p;
         })
       );
-    }, 5000);
 
-    return () => clearInterval(interval);
-  }, [userVotes, pointsHistory, setPredictions, setTotalPoints]);
+  }, [userVotes]);
 
+  console.log({pointsHistory})
   return (
     <div>
       {pointsHistory.length > 0 && (
         <div className="mt-8 animate-slide-up">
           <h2 className="text-2xl font-bold text-white mb-4">Points History</h2>
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-80 overflow-y-auto overflow-x-hidden"
+            style={{ scrollbarWidth: 'thin' }}
+          >
             {pointsHistory.map((entry) => (
               <div
                 key={entry.predictionId}
@@ -82,7 +88,7 @@ const PointsHistory = () => {
               >
                 <p className="text-sm text-white">{entry.text}</p>
                 <p className="text-xs text-gray-400">
-                  Your vote: {entry.vote === "up" ? "Yes" : "No"} • Result: {entry.result} • Points:{" "}
+                  Your vote: {entry.vote === "Yes" ? "Yes" : "No"} • Result: {entry.result} • Points:{" "}
                   <span
                     className={
                       entry.points >= 0 ? "text-green-400" : "text-red-400"

@@ -14,13 +14,16 @@ const Profile = () => {
     const [avatar, setAvatar] = React.useState("😎");
     const { userVotes } = useFetchVotes()
     const { leaderboard, currentUser, loading, error, refetch } = useLeaderboard(leaderboardPeriod, leaderboardCategory)
-    const categoryStats = predictionCategories.reduce((acc, category) => {
+
+    const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
             total: userVotes.filter(vote => vote.category === category).length,
             correct: userVotes.filter(vote => vote.category === category && vote.isCorrect).length
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
+
+    console.log({categoryStats})
 
     // console.log({currentUser, leaderboard, userVotes, categoryStats});
     const handleSaveProfile = () => {
@@ -29,6 +32,7 @@ const Profile = () => {
         console.log("Profile saved:", { username, avatar });
     }
 
+    console.log({userVotes})
     const totalPredictions = userVotes.length;
     const correctVotes = userVotes.filter(vote => vote.isCorrect).length;
     const correctPercentage = totalPredictions > 0 ? ((correctVotes / totalPredictions) * 100).toFixed(1) : "0.0";
@@ -191,11 +195,17 @@ const getBadges = useCallback(() => {
           <div className="mt-4">
             <h3 className="text-sm font-semibold text-white">Category Stats</h3>
             <div className="text-sm text-gray-400">
-              {predictionCategories.map((cat) => (
+              <p>
+                All Categories: {totalPredictions} votes,{" "}
+                {totalPredictions > 0
+                  ? ((correctVotes / totalPredictions) * 100).toFixed(1)
+                  : "0.0"}% correct
+              </p>
+              {predictionCategories?.filter(cat => cat !='All')?.map((cat) => (
                 <p key={cat}>
-                  {cat}: {categoryStats[cat].total} votes,{" "}
-                  {categoryStats[cat].total > 0
-                    ? ((categoryStats[cat].correct / categoryStats[cat].total) * 100).toFixed(1)
+                  {cat}: {categoryStats[cat]?.total} votes,{" "}
+                  {categoryStats[cat]?.total > 0
+                    ? ((categoryStats[cat]?.correct / categoryStats[cat]?.total) * 100).toFixed(1)
                     : "0.0"}
                   % correct
                 </p>
