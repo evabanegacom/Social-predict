@@ -22,7 +22,7 @@ const Profile = () => {
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
 
-    console.log({currentUser, leaderboard, userVotes, categoryStats});
+    // console.log({currentUser, leaderboard, userVotes, categoryStats});
     const handleSaveProfile = () => {
         // Logic to save profile changes
         setIsEditing(false);

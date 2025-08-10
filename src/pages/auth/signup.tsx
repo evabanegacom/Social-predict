@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { User, Phone, Lock, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../global-context';
 import apiClient from '../../lib/api';
+import Spinner from '../../components/spinner';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const { login, theme, toggleTheme } = useAuth();
+  const [ loading, setLoading ] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -25,27 +26,31 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.username && !formData.phone) {
+    if (!formData.username && !formData?.phone) {
       setError('Please provide either a username or phone number.');
       return;
     }
-    if (formData.password !== formData.password_confirmation) {
+    if (formData.password !== formData?.password_confirmation) {
       setError('Passwords do not match.');
       return;
     }
+
+    setLoading(true);
 
     try {
       const response = await apiClient.post('/signup', {
         user: formData,
       });
-      const { user, token } = response.data.data;
+      const { user, token } = response?.data?.data;
       login(user, token);
-      setSuccess('Signup successful! Redirecting...');
+      setSuccess(response?.data?.message || 'Signup successful! Redirecting...');
       setTimeout(() => {
         navigate('/');
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed. Please try again.');
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -71,7 +76,7 @@ const Signup = () => {
               value={formData.username}
               onChange={handleChange}
               className={`w-full bg-transparent outline-none ${theme === 'dark' ? 'text-white placeholder-[#8899A6]' : 'text-[#14171A] placeholder-[#657786]'}`}
-              placeholder="Username (optional)"
+              placeholder="Username"
             />
           </div>
           {/* <div className={`flex items-center border ${theme === 'dark' ? 'border-[#38444D] bg-[#253341]' : 'border-[#E1E8ED] bg-[#F5F8FA]'} rounded-full p-3`}>
@@ -108,10 +113,11 @@ const Signup = () => {
             />
           </div>
           <button
+            disabled={loading}
             type="submit"
             className="w-full bg-[#1DA1F2] cursor-pointer text-white p-3 rounded-full hover:bg-[#1A91DA] transition-colors font-semibold text-base"
           >
-            Sign Up
+            {loading ? <Spinner /> : 'Sign Up'}
           </button>
         </form>
         <p className={`mt-4 text-center ${theme === 'dark' ? 'text-[#8899A6]' : 'text-[#657786]'}`}>
