@@ -6,9 +6,8 @@ import toast from 'react-hot-toast';
 import apiClient from '../lib/api';
 
 const PointsHistory = () => {
-  const { setPredictions, totalPoints, setTotalPoints } = useAuth();
+  const { setPredictions, setTotalPoints, pointsHistory, setPointsHistory } = useAuth();
   const { userVotes } = useFetchVotes();
-  const [pointsHistory, setPointsHistory] = useState([]);
 
   useEffect(() => {
       setPredictions((prev) =>

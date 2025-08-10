@@ -3,6 +3,9 @@ import apiClient from './lib/api';
 import type { Category, LeaderboardPeriod } from './lib/types';
 import { getMessaging, getToken } from 'firebase/messaging';
 import { firebaseApp } from './lib/firebase';
+import { useFetchVotes } from './hooks';
+import { POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT } from './lib/utils';
+import toast from 'react-hot-toast';
 
 interface User {
   id: number;
@@ -33,6 +36,8 @@ interface AuthContextType {
   setLeaderboardCategory?: React.Dispatch<React.SetStateAction<Category>>;
   predictionCategories?: string[];
   setUser?: React.Dispatch<React.SetStateAction<User | null>>;
+  pointsHistory?: any[];
+  setPointsHistory?: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,6 +54,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ predictions, setPredictions ] = useState<any[]>([]);
   const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>("all-time");
   const [leaderboardCategory, setLeaderboardCategory] = useState<Category>("All");
+  const { userVotes } = useFetchVotes();
+  const [pointsHistory, setPointsHistory] = useState([]);
 
   const getPredictions = async () => {
     try {
@@ -84,6 +91,68 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     fetchUser();
     getPredictions();
   }, []);
+
+  useEffect(() => {
+    setPredictions((prev) =>
+      prev.map((p) => {
+        console.log({p})
+        if (p?.status === 'resolved'  && p.result !== null) {
+          const result = p?.result
+
+          const userVote = userVotes.find((vote) => vote.prediction_id === p.id);
+          console.log({userVote})
+          if (userVote) {
+            const isCorrect =
+              (userVote?.choice === "Yes" && result === "Yes") ||
+              (userVote?.choice === "No" && result === "No");
+
+            const points = isCorrect ? POINTS_FOR_CORRECT : POINTS_FOR_INCORRECT;
+
+            // Prevent double-counting the same prediction
+            if (!pointsHistory.some((entry) => entry.predictionId === p.id)) {
+              setPointsHistory((prev) => {
+                if (prev.some((entry) => entry.predictionId === p.id)) {
+                  return prev; // Already added, don't add again
+                }
+                return [
+                  ...prev,
+                  {
+                    predictionId: p.id,
+                    text: p.text,
+                    vote: userVote?.choice,
+                    result,
+                    points,
+                    category: p.category,
+                    resolvedAt: Date.now(),
+                  },
+                ];
+              });
+              
+
+              setTotalPoints((prev) => prev + points);
+
+              toast.success(
+                `Prediction "${p.text}" resolved: ${result}! You ${
+                  isCorrect ? "gained" : "lost"
+                } ${Math.abs(points)} points.`,
+                {
+                  duration: 4000,
+                  style: {
+                    background: "#1f2937",
+                    color: "#ffffff",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
+                  },
+                }
+              );
+            }
+          }
+          return { ...p, result };
+        }
+        return p;
+      })
+    );
+
+}, [userVotes]);
 
   const WAP_ID = 'BI_vmKiuuvVEZ_HUaY-UliZmPfEqnewGY_Ius2n5hVcb7OFwAWcdyiyLxyPLVUd3uHHAhz4K1HLblpgdfIXeFl0'
   useEffect(() => {
@@ -159,7 +228,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLeaderboardPeriod,
         setLeaderboardCategory,
         predictionCategories,
-        setUser
+        setUser,
+        pointsHistory,
+        setPointsHistory
         }}>
       {children}
     </AuthContext.Provider>

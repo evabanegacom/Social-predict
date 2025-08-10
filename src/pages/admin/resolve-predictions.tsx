@@ -1,7 +1,6 @@
-
 import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, X } from 'lucide-react';
+import { Check, X, CheckCircle, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuth } from '../../global-context';
 import apiClient from '../../lib/api';
@@ -17,28 +16,35 @@ const ResolvePrediction: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState<Category>('All');
   const [userVotes, setUserVotes] = useState<UserVote[]>([]);
   const [votingHistory, setVotingHistory] = useState<number[]>([]);
-  const [resolution, setResolution] = useState<{ [key: number]: string }>({}); // Track resolution input
+  const [resolution, setResolution] = useState<{ [key: number]: string }>({});
   const navigate = useNavigate();
 
   const filteredPredictions = useMemo(() => {
-    return predictions
-      .filter((p) => (activeTab === 'active' ? Date.now() < p?.expires_at : p.result !== null))
+    let filtered = predictions;
+    if (activeTab === 'active') {
+      filtered = user?.admin
+        ? predictions.filter((p) => p.status === 'approved' || p.status === 'pending')
+        : predictions.filter((p) => p.status === 'approved' && Date.now() < p.expires_at);
+    } else {
+      filtered = predictions.filter((p) => p.result !== null);
+    }
+    return filtered
       .filter((p) => categoryFilter === 'All' || p.category === categoryFilter)
       .sort((a, b) => {
         switch (filter) {
           case 'latest':
             return b.createdAt - a.createdAt;
           case 'ending':
-            return a.createdAt + EXPIRY_TIME - (b?.createdAt + EXPIRY_TIME);
+            return a.expires_at - b.expires_at;
           case 'trending':
           default:
             return b.upvotes - a.upvotes;
         }
       });
-  }, [predictions, categoryFilter, filter, activeTab]);
+  }, [predictions, categoryFilter, filter, activeTab, user?.admin]);
 
-  const getTimeLeft = useCallback((createdAt: number) => {
-    const remaining = EXPIRY_TIME - (Date.now() - createdAt);
+  const getTimeLeft = useCallback((expires_at: number) => {
+    const remaining = expires_at - Date.now();
     if (remaining <= 0) return 'Expired';
     const hrs = Math.floor(remaining / (1000 * 60 * 60));
     const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -102,7 +108,7 @@ const ResolvePrediction: React.FC = () => {
         navigate(`/login?returnTo=/predictions/${id}`);
         return;
       }
-      if (hasVoted(id) || Date.now() - predictions.find((p) => p.id === id)!.createdAt >= EXPIRY_TIME) {
+      if (hasVoted(id) || Date.now() >= predictions.find((p) => p.id === id)!.expires_at) {
         toast.error('You already voted or this prediction has expired!', {
           style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
         });
@@ -124,7 +130,7 @@ const ResolvePrediction: React.FC = () => {
               )
             );
             setUserVotes((prev) => [...prev, { predictionId: id, voteType: type }]);
-            const now = new Date('2025-08-10T08:08:00+01:00');
+            const now = new Date('2025-08-10T11:36:00+01:00');
             const dayStart = new Date(now.setHours(0, 0, 0, 0)).getTime();
             if (!votingHistory.includes(dayStart)) {
               setVotingHistory((prev) => [...prev, dayStart].sort((a, b) => b - a));
@@ -152,7 +158,7 @@ const ResolvePrediction: React.FC = () => {
 
   const handleResolve = useCallback(
     (id: number) => {
-      if (!user?.admin) return; // Safety check
+      if (!user?.admin) return;
       const result = resolution[id];
       if (!result) {
         toast.error('Please select a resolution result!', {
@@ -184,6 +190,52 @@ const ResolvePrediction: React.FC = () => {
         });
     },
     [resolution, user, setPredictions]
+  );
+
+  const handleApprove = useCallback(
+    (id: number) => {
+      if (!user?.admin) return;
+      apiClient
+        .patch(`/predictions/${id}/approve`)
+        .then((response) => {
+          if (response.data.status === 200) {
+            setPredictions((prev) =>
+              prev.map((p) => (p.id === id ? { ...p, status: 'approved' } : p))
+            );
+            toast.success('Prediction approved!', {
+              style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+            });
+          }
+        })
+        .catch((error) => {
+          toast.error(error.response?.data?.message || 'Failed to approve prediction.', {
+            style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+          });
+        });
+    },
+    [user, setPredictions]
+  );
+
+  const handleDelete = useCallback(
+    (id: number) => {
+      if (!user?.admin) return;
+      apiClient
+        .delete(`/predictions/${id}`)
+        .then((response) => {
+          if (response.data.status === 200) {
+            setPredictions((prev) => prev.filter((p) => p.id !== id));
+            toast.success('Prediction deleted!', {
+              style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+            });
+          }
+        })
+        .catch((error) => {
+          toast.error(error.response?.data?.message || 'Failed to delete prediction.', {
+            style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+          });
+        });
+    },
+    [user, setPredictions]
   );
 
   return (
@@ -295,12 +347,12 @@ const ResolvePrediction: React.FC = () => {
             <p className="text-lg font-medium text-white">{pred.text}</p>
             <p className="text-sm text-gray-400">{pred.user}</p>
             <p className="text-xs text-gray-500 mt-1">
-              {pred.category} • {pred.result ? `Resolved: ${pred.result}` : getTimeLeft(pred.createdAt)}
+              {pred.category} • {pred.result ? `Resolved: ${pred.result}` : getTimeLeft(pred.expires_at)} • Status: {pred.status}
             </p>
             <div className="mt-3 flex items-center gap-4">
               <button
                 onClick={() => handleVote(pred.id, 'up')}
-                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated || pred.status !== 'approved'}
                 className={`flex items-center gap-2 text-sm ${
                   getUserVote(pred.id) === 'up' ? 'text-green-400 font-bold' : 'text-green-500'
                 } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -309,7 +361,7 @@ const ResolvePrediction: React.FC = () => {
               </button>
               <button
                 onClick={() => handleVote(pred.id, 'down')}
-                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated || pred.status !== 'approved'}
                 className={`flex items-center gap-2 text-sm ${
                   getUserVote(pred.id) === 'down' ? 'text-red-400 font-bold' : 'text-red-500'
                 } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -320,27 +372,45 @@ const ResolvePrediction: React.FC = () => {
                 <span className="text-xs text-gray-500">Vote locked until expiry</span>
               )}
             </div>
-            {/* Admin Resolution UI */}
-            {user?.admin && pred.result === null && (
+            {/* Admin Actions UI */}
+            {user?.admin && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium text-white">Resolve Prediction</h4>
-                <div className="flex gap-2 mt-2">
-                  <select
-                    value={resolution[pred.id] || ''}
-                    onChange={(e) => setResolution({ ...resolution, [pred.id]: e.target.value })}
-                    className="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="" disabled>Select Result</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                    <option value="Maybe">Maybe</option>
-                  </select>
+                <h4 className="text-sm font-medium text-white">Admin Actions</h4>
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {pred.status === 'pending' && (
+                    <button
+                      onClick={() => handleApprove(pred.id)}
+                      className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all"
+                    >
+                      <CheckCircle className="w-5 h-5" /> Approve
+                    </button>
+                  )}
+                  {pred.result === null && (
+                    <div className="flex gap-2">
+                      <select
+                        value={resolution[pred.id] || ''}
+                        onChange={(e) => setResolution({ ...resolution, [pred.id]: e.target.value })}
+                        className="p-2 rounded-lg bg-gray-700 border border-gray-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="" disabled>Select Result</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="Maybe">Maybe</option>
+                      </select>
+                      <button
+                        onClick={() => handleResolve(pred.id)}
+                        disabled={!resolution[pred.id]}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:bg-gray-600 transition-all"
+                      >
+                        Resolve
+                      </button>
+                    </div>
+                  )}
                   <button
-                    onClick={() => handleResolve(pred.id)}
-                    disabled={!resolution[pred.id]}
-                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:bg-gray-600 transition-all"
+                    onClick={() => handleDelete(pred.id)}
+                    className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg hover:from-red-600 hover:to-red-700 transition-all"
                   >
-                    Resolve
+                    <Trash2 className="w-5 h-5" /> Delete
                   </button>
                 </div>
               </div>
@@ -353,3 +423,4 @@ const ResolvePrediction: React.FC = () => {
 };
 
 export default ResolvePrediction;
+

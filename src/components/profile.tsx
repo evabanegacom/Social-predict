@@ -17,13 +17,14 @@ const Profile = () => {
 
     const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
-            total: userVotes.filter(vote => vote.category === category).length,
-            correct: userVotes.filter(vote => vote.category === category && vote.isCorrect).length
+            total: userVotes.filter(vote => vote?.category === category)?.length,
+            correct: userVotes.filter(vote => vote?.category === category && vote?.correct)?.length
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
 
     console.log({categoryStats})
+    
 
     // console.log({currentUser, leaderboard, userVotes, categoryStats});
     const handleSaveProfile = () => {
@@ -33,10 +34,10 @@ const Profile = () => {
     }
 
     console.log({userVotes})
-    const totalPredictions = userVotes.length;
-    const correctVotes = userVotes.filter(vote => vote.isCorrect).length;
+    const totalPredictions = userVotes?.length;
+    const correctVotes = userVotes?.filter(vote => vote?.correct)?.length;
     const correctPercentage = totalPredictions > 0 ? ((correctVotes / totalPredictions) * 100).toFixed(1) : "0.0";
-    const totalPoints = userVotes.reduce((total, vote) => total + (vote.points || 0), 0);
+    const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
 
     const getStreak = useCallback(() => {
         if (userVotes.length === 0) return 0;
