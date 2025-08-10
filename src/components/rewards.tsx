@@ -13,7 +13,7 @@ interface Reward {
 }
 
 const Rewards: React.FC = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, userVotes } = useAuth();
   const [rewards, setRewards] = useState<Reward[]>([]);
 
   const fetchRewards = useCallback(async () => {
@@ -51,7 +51,7 @@ const Rewards: React.FC = () => {
     try {
       const response = await apiClient.post(`/rewards/${rewardId}/redeem`);
       if (response.data.status === 200) {
-        setUser((prev) => prev ? { ...prev, points: response.data.data.points_remaining } : prev);
+        setUser((prev) => prev ? { ...prev, points: response?.data?.data?.points_remaining } : prev);
         setRewards((prev) =>
           prev.map((r) => (r.id === rewardId ? { ...r, stock: r.stock - 1 } : r))
         );
@@ -77,16 +77,17 @@ const Rewards: React.FC = () => {
   useEffect(() => {
     fetchRewards();
   }, [fetchRewards]);
-
-  return (
+console.log({user})
+const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
+return (
     <div className="mb-8 animate-slide-up">
       <h2 className="text-2xl font-bold text-white mb-4">Rewards Store</h2>
-      <p className="text-sm text-gray-400 mb-4">Your Points: {user?.points ?? 0}</p>
+      <p className="text-sm text-gray-400 mb-4">Your Points: {totalPoints ?? 0}</p>
       <div className="space-y-4">
         {rewards.length === 0 ? (
           <p className="text-gray-400">No rewards available at the moment.</p>
         ) : (
-          rewards.filter((reward) => (user?.points ?? 0) >= reward.points_cost).map((reward) => (
+          rewards.filter((reward) => (totalPoints ?? 0) >= reward.points_cost).map((reward) => (
             <div
               key={reward.id}
               className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"
@@ -98,7 +99,7 @@ const Rewards: React.FC = () => {
               <p className="text-sm text-gray-400">Type: {reward.reward_type}</p>
               <button
                 onClick={() => handleRedeem(reward.id, reward.points_cost)}
-                disabled={reward.stock <= 0 || (user?.points ?? 0) < reward.points_cost}
+                disabled={reward.stock <= 0 || (totalPoints ?? 0) < reward.points_cost}
                 className="mt-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-lg hover:from-red-600 hover:to-red-700 disabled:bg-gray-600 transition-all transform hover:scale-105"
               >
                 Redeem

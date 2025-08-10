@@ -26,6 +26,7 @@ export default function Home() {
       {/* Desktop: left sidebar (PredictionSpotlight) */}
       <div className="hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 mt-24">
         <PredictionSpotlight />
+        <PointsHistory />
       </div>
       
       {/* Main content centered */}
@@ -75,12 +76,13 @@ export default function Home() {
             <div ref={predictionsRef}>
               <Predictions />
             </div>
-            <PointsHistory />
+            {/* <PointsHistory /> */}
           </div>
         )}
         {activeTab === "spotlight" && (
           <div className="md:hidden">
             <PredictionSpotlight />
+            <PointsHistory />
           </div>
         )}
         {activeTab === "activity" && (
@@ -91,6 +93,7 @@ export default function Home() {
       </div>
 
       {/* Desktop: right sidebar (ActivityFeed) */}
+      
       <div className="hidden md:flex md:flex-col md:w-64 lg:w-72 xl:w-80 mt-24">
         <ActivityFeed />
       </div>
