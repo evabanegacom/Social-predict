@@ -51,12 +51,13 @@ const Rewards: React.FC = () => {
     try {
       const response = await apiClient.post(`/rewards/${rewardId}/redeem`);
       if (response.data.status === 200) {
+        console.log('Reward redeemed:', response.data.data);
         setUser((prev) => prev ? { ...prev, points: response?.data?.data?.points_remaining } : prev);
         setRewards((prev) =>
           prev.map((r) => (r.id === rewardId ? { ...r, stock: r.stock - 1 } : r))
         );
         toast.success(
-          `Reward "${response.data.data.name}" redeemed! ${response.data.data.code ? `Code: ${response.data.data.code}` : ''}`,
+          `Reward "${response?.data?.data?.reward?.name}" redeemed! ${response.data.data.code ? `Code: ${response.data.data.code}` : ''}`,
           {
             style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
             duration: 5000,
