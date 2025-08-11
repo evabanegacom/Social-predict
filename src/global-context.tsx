@@ -102,9 +102,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTotalPoints(total);
       }
     } catch (error) {
-      toast.error('Failed to fetch points history.', {
-        style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
-      });
+      // toast.error('Failed to fetch points history.', {
+      //   style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
+      // });
+      console.error('Error fetching points history:', error);
     }
   };
 
