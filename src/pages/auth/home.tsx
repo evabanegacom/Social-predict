@@ -10,11 +10,14 @@ import ActivityFeed from "../../components/activity-feed";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../global-context";
+import { useFetchVotes } from "../../hooks";
 
 export default function Home() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"main" | "spotlight" | "activity">("main");
+  const { userVotes } = useFetchVotes();
+  const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
 
   const predictionsRef = useRef<HTMLDivElement>(null);
 
@@ -23,12 +26,12 @@ export default function Home() {
     predictionsRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  useEffect(() => {
-    // Redirect to login if user is not authenticated
-    if (!user) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
+  // useEffect(() => {
+  //   // Redirect to login if user is not authenticated
+  //   if (!user) {
+  //     navigate("/login");
+  //   }
+  // }, [user, navigate]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gray-900 text-white pt-6 pb-6 px-4 font-sans relative flex flex-col md:flex-row md:justify-between">
@@ -82,8 +85,8 @@ export default function Home() {
         {activeTab === "main" && (
           <div className="space-y-8">
             <Profile />
-            <LeaderBoard />
-            <Rewards />
+            {totalPoints > 49 && <LeaderBoard />}
+            {totalPoints > 49 && <Rewards />}
             <div ref={predictionsRef}>
               <Predictions />
             </div>

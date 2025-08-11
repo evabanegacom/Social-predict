@@ -54,13 +54,12 @@ const Predictions: React.FC = () => {
   const pageSize = 5;
   const pagedPredictions = filteredPredictions?.slice((page - 1) * pageSize, page * pageSize);
 
-  console.log({ userVotes, pagedPredictions });
-
   return (
     <div>
       {/* <PredictionForm /> */}
 
       {/* Prediction Tabs */}
+      {pagedPredictions?.length && pagedPredictions?.length > 0 &&
       <div className="flex justify-center gap-3 mb-6 flex-wrap">
         <button
           onClick={() => setActiveTab('active')}
@@ -82,7 +81,7 @@ const Predictions: React.FC = () => {
         >
           Resolved Predictions
         </button>
-      </div>
+      </div>}
 
       {/* Filters */}
       <div className="flex justify-center gap-3 mb-6 flex-wrap">
@@ -143,7 +142,8 @@ const Predictions: React.FC = () => {
             <div className="mt-3 flex items-center gap-4">
               <button
                 onClick={() => handleVote(pred.id, VoteOption.Yes)}
-                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                // disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                disabled={hasVoted(pred.id) || pred.result !== null}
                 className={`flex items-center gap-2 cursor-pointer text-sm ${
                   getUserVote(pred.id) === VoteOption.Yes ? 'text-green-400 font-bold' : 'text-green-500'
                 } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -152,7 +152,8 @@ const Predictions: React.FC = () => {
               </button>
               <button
                 onClick={() => handleVote(pred.id, VoteOption.No)}
-                disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                // disabled={hasVoted(pred.id) || pred.result !== null || !isAuthenticated}
+                disabled={hasVoted(pred.id) || pred.result !== null}
                 className={`flex items-center gap-2 text-sm cursor-pointer ${
                   getUserVote(pred.id) === VoteOption.No ? 'text-red-400 font-bold' : 'text-red-500'
                 } hover:scale-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
@@ -167,6 +168,7 @@ const Predictions: React.FC = () => {
         ))}
       </div>
 
+      {pagedPredictions?.length && pagedPredictions?.length > 0 && 
       <div className="flex justify-between mt-4 px-4">
         <button
           onClick={() => setPage((p) => Math.max(p - 1, 1))}
@@ -188,7 +190,7 @@ const Predictions: React.FC = () => {
         >
           Next
         </button>
-      </div>
+      </div>}
     </div>
   );
 };

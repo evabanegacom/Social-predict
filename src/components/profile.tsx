@@ -22,8 +22,6 @@ const Profile = () => {
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
-
-    console.log({categoryStats})
     
 
     // console.log({currentUser, leaderboard, userVotes, categoryStats});
@@ -33,7 +31,6 @@ const Profile = () => {
         console.log("Profile saved:", { username, avatar });
     }
 
-    console.log({userVotes})
     const totalPredictions = userVotes?.length;
     const correctVotes = userVotes?.filter(vote => vote?.correct)?.length;
     const correctPercentage = totalPredictions > 0 ? ((correctVotes / totalPredictions) * 100).toFixed(1) : "0.0";
