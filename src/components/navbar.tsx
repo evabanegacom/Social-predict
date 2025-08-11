@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Controls */}
         <div className="hidden md:flex items-center gap-4">
-          <Link
+          {/* <Link
             to="/dashboard"
             className={`text-sm font-medium ${
               location.pathname === '/dashboard'
@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
             } hover:text-blue-500 dark:hover:text-blue-300`}
           >
             Dashboard
-          </Link>
+          </Link> */}
           <button
             onClick={toggleTheme}
             className="text-gray-700 dark:text-gray-300 hover:text-yellow-500 dark:hover:text-yellow-300 transition"
@@ -84,7 +84,7 @@ const Navbar: React.FC = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-gray-900 border-t border-gray-800 py-4 px-4 animate-slide-in-top">
           <div className="flex flex-col gap-4">
-            <Link
+            {/* <Link
               to="/dashboard"
               onClick={() => setIsMenuOpen(false)}
               className={`text-sm font-medium ${
@@ -94,7 +94,7 @@ const Navbar: React.FC = () => {
               } hover:text-blue-300`}
             >
               Dashboard
-            </Link>
+            </Link> */}
             <button
               onClick={() => {
                 toggleTheme();
