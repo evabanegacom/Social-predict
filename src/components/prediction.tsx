@@ -13,9 +13,9 @@ const Predictions: React.FC = () => {
 
   const filteredPredictions = useMemo(() => {
     return predictions
-      .filter((p) => ['approved', 'resolved'].includes(p.status)) // ✅ include approved & resolved
-      .filter((p) => categoryFilter === 'All' || p.category === categoryFilter)
-      .sort((a, b) => {
+      ?.filter((p) => ['approved', 'resolved'].includes(p.status)) // ✅ include approved & resolved
+      ?.filter((p) => categoryFilter === 'All' || p.category === categoryFilter)
+      ?.sort((a, b) => {
         // First, approved before resolved
         if (a.status === 'approved' && b.status !== 'approved') return -1;
         if (b.status === 'approved' && a.status !== 'approved') return 1;
@@ -52,7 +52,7 @@ const Predictions: React.FC = () => {
   
   const [page, setPage] = useState(1);
   const pageSize = 5;
-  const pagedPredictions = filteredPredictions.slice((page - 1) * pageSize, page * pageSize);
+  const pagedPredictions = filteredPredictions?.slice((page - 1) * pageSize, page * pageSize);
 
   console.log({ userVotes, pagedPredictions });
 
@@ -130,7 +130,7 @@ const Predictions: React.FC = () => {
 
       {/* Predictions List */}
       <div className="space-y-4">
-        {pagedPredictions.map((pred) => (
+        {pagedPredictions?.map((pred) => (
           <div
             key={pred.id}
             className="p-6 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"
@@ -178,10 +178,10 @@ const Predictions: React.FC = () => {
           Previous
         </button>
         <button
-          onClick={() => setPage((p) => (p * pageSize < filteredPredictions.length ? p + 1 : p))}
-          disabled={page * pageSize >= filteredPredictions.length}
+          onClick={() => setPage((p) => (p * pageSize < filteredPredictions?.length ? p + 1 : p))}
+          disabled={page * pageSize >= filteredPredictions?.length}
           className={`px-4 py-2 rounded-md font-semibold transition-colors duration-200 ${
-            page * pageSize >= filteredPredictions.length
+            page * pageSize >= filteredPredictions?.length
               ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
               : 'bg-gray-800 text-white hover:bg-gray-700'
           }`}

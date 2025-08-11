@@ -9,16 +9,16 @@ import html2canvas from 'html2canvas';
 const Profile = () => {
     const badgeRef = useRef<HTMLDivElement>(null);
     const [isEditing, setIsEditing] = React.useState(false);
-    const {leaderboardPeriod, leaderboardCategory, predictionCategories, user} = useAuth()
+    const {leaderboardPeriod, leaderboardCategory, predictionCategories, user, pointsHistory} = useAuth()
     const [username, setUsername] = React.useState(user?.username || "Anonymous");
     const [avatar, setAvatar] = React.useState("😎");
     const { userVotes } = useFetchVotes()
     const { leaderboard, currentUser } = useLeaderboard(leaderboardPeriod, leaderboardCategory)
-
+   const totalPointHistory = pointsHistory?.reduce((total, entry) => total + (entry?.points || 0), 0);
     const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
-            total: userVotes.filter(vote => vote?.category === category)?.length,
-            correct: userVotes.filter(vote => vote?.category === category && vote?.correct)?.length
+            total: userVotes?.filter(vote => vote?.category === category)?.length,
+            correct: userVotes?.filter(vote => vote?.category === category && vote?.correct)?.length
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
@@ -40,12 +40,12 @@ const Profile = () => {
     const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
 
     const getStreak = useCallback(() => {
-        if (userVotes.length === 0) return 0;
+        if (userVotes?.length === 0) return 0;
       
         // Sort by vote date (most recent first)
-        const sortedVotes = [...userVotes].sort(
+        const sortedVotes = [...(userVotes?.length ? userVotes : [])].sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+        );        
       
         let streak = 1;
         for (let i = 1; i < sortedVotes.length; i++) {
@@ -181,6 +181,9 @@ const getBadges = useCallback(() => {
           <p className="text-sm text-gray-400">
             Total Predictions: {totalPredictions} • Correct: {correctPercentage}% • Points: {totalPoints}
           </p>
+          <p className="text-sm text-gray-400 mb-4">
+        Your points after Gift redemption: {totalPointHistory ?? 0}
+      </p>
           <p className="text-sm text-gray-400">Streak: {streak} days</p>
           <p className="text-sm text-gray-400">Rank: #{myRank}</p>
           {badges.length > 0 && (

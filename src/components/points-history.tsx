@@ -5,10 +5,8 @@ import { POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT, VoteOption } from '../lib/uti
 import toast from 'react-hot-toast';
 
 const PointsHistory = () => {
-  const { setPredictions, setTotalPoints, pointsHistory, setPointsHistory } = useAuth();
-  const { userVotes } = useFetchVotes();
+  const { pointsHistory } = useAuth();
 
-  console.log({pointsHistory})
   return (
     <div>
       {pointsHistory.length > 0 && (
@@ -23,6 +21,16 @@ const PointsHistory = () => {
                 className="p-4 bg-gray-800/80 backdrop-blur-lg rounded-xl border border-gray-700 transition-all transform hover:scale-105"
               >
                 <p className="text-sm text-white">{entry.text}</p>
+                {entry?.choice == 'reward_redemption'?
+                <p className="text-xs text-gray-400">
+                Redeemed Reward {entry?.name} for{" "}
+                <span className={entry.points >= 0 ? "text-green-400" : "text-red-400"}>
+                  {entry.points > 0 ? `+${entry.points}` : entry.points}
+                </span>{" "}
+                Points
+              </p>
+              
+              :
                 <p className="text-xs text-gray-400">
                   Your vote: {entry?.choice === VoteOption?.Yes ? "Yes" : "No"} • Result: {entry.result} • Points:{" "}
                   <span
@@ -32,7 +40,7 @@ const PointsHistory = () => {
                   >
                     {entry.points > 0 ? `+${entry.points}` : entry.points}
                   </span>
-                </p>
+                </p>}
               </div>
             ))}
           </div>
