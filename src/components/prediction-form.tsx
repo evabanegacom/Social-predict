@@ -10,7 +10,7 @@ import apiClient from '../lib/api';
 const PredictionForm = () => {
     const [newPrediction, setNewPrediction] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const { isAuthenticated, getPredictions } = useAuth();
+  const { isAuthenticated, getPredictions, predictionCategories } = useAuth();
   const navigate = useNavigate();
   const [expiryTime, setExpiryTime] = useState(EXPIRY_TIME / (60 * 60 * 1000)); // Default in hours (e.g., 24)
 
@@ -87,9 +87,11 @@ const PredictionForm = () => {
           <option value="" disabled>
             Select a category
           </option>
-          <option value="Music">Music</option>
-          <option value="Politics">Politics</option>
-          <option value="Sports">Sports</option>
+          {predictionCategories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
         <button
           onClick={handleSubmit}
