@@ -17,8 +17,8 @@ const Profile = () => {
    const totalPointHistory = pointsHistory?.reduce((total, entry) => total + (entry?.points || 0), 0);
     const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
-            total: userVotes.filter(vote => vote?.category === category)?.length,
-            correct: userVotes.filter(vote => vote?.category === category && vote?.correct)?.length
+            total: userVotes?.filter(vote => vote?.category === category)?.length,
+            correct: userVotes?.filter(vote => vote?.category === category && vote?.correct)?.length
         };
         return acc;
     }, {} as Record<string, { total: number; correct: number }>);
@@ -40,12 +40,12 @@ const Profile = () => {
     const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
 
     const getStreak = useCallback(() => {
-        if (userVotes.length === 0) return 0;
+        if (userVotes?.length === 0) return 0;
       
         // Sort by vote date (most recent first)
-        const sortedVotes = [...userVotes].sort(
+        const sortedVotes = [...(userVotes?.length ? userVotes : [])].sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+        );        
       
         let streak = 1;
         for (let i = 1; i < sortedVotes.length; i++) {
