@@ -7,7 +7,6 @@ import toast from 'react-hot-toast';
 const PointsHistory = () => {
   const { pointsHistory } = useAuth();
 
-  console.log({pointsHistory})
   return (
     <div>
       {pointsHistory.length > 0 && (
