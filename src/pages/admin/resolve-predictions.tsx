@@ -59,10 +59,7 @@ const ResolvePrediction: React.FC = () => {
       });
   }, [predictions, categoryFilter, filter, activeTab, user?.admin]);
   
-  
-
-  console.log({ filteredPredictions });
-  const handleResolve = useCallback(
+    const handleResolve = useCallback(
     (id: number) => {
       if (!user?.admin) return;
       const result = resolution[id];

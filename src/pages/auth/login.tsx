@@ -49,7 +49,8 @@ const SignIn = () => {
       login(user, token);
       setSuccess(response?.data?.message || 'Login successful! Redirecting...');
       setTimeout(() => {
-        navigate('/');
+        // navigate('/');
+        window.location.href = '/';
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');

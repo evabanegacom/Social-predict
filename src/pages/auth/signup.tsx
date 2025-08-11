@@ -45,7 +45,8 @@ const Signup = () => {
       login(user, token);
       setSuccess(response?.data?.message || 'Signup successful! Redirecting...');
       setTimeout(() => {
-        navigate('/');
+        // navigate('/');
+        window.location.href = '/';
       }, 2000);
     } catch (err) {
       setError(err.response?.data?.message || 'Signup failed. Please try again.');

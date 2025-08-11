@@ -8,8 +8,12 @@ import Rewards from "../../components/rewards";
 import PredictionSpotlight from "../../components/prediction-spotlight";
 import ActivityFeed from "../../components/activity-feed";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../global-context";
 
 export default function Home() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<"main" | "spotlight" | "activity">("main");
 
   const predictionsRef = useRef<HTMLDivElement>(null);
@@ -18,6 +22,13 @@ export default function Home() {
     // Scroll to predictions when component mounts
     predictionsRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
+
+  useEffect(() => {
+    // Redirect to login if user is not authenticated
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gray-900 text-white pt-6 pb-6 px-4 font-sans relative flex flex-col md:flex-row md:justify-between">
