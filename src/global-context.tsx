@@ -79,7 +79,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getPredictions = async () => {
     try {
       const response = await apiClient.get('/predictions');
-      console.log('Predictions fetched:', response.data.data);
       if (response.status === 200) {
         setPredictions(response.data.data);
         return response.data.data;
@@ -95,7 +94,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getPointsHistory = async () => {
     try {
       const response = await apiClient.get('/points_history');
-      console.log('Points history fetched:', response.data.data);
       if (response.data.status === 200) {
         setPointsHistory(response.data.data);
         const total = response.data.data.reduce((sum: number, entry: PointEntry) => sum + entry.points, user?.points || 0);
@@ -143,7 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [predictions, userVotes, isAuthenticated]);
 
-  const WAP_ID = 'BI_vmKiuuvVEZ_HUaY-UliZmPfEqnewGY_Ius2n5hVcb7OFwAWcdyiyLxyPLVUd3uHHAhz4K1HLblpgdfIXeFl0';
+  const WAP_ID = import.meta.env.VITE_APP_ID
   useEffect(() => {
     if ('Notification' in window) {
       Notification.requestPermission().then((permission) => {
@@ -178,12 +176,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('token', token);
   };
 
-  console.log('Current user:', user);
-
   const logout = async () => {
     try {
       const response = await apiClient.delete('/logout');
-      console.log('Logout response:', response.data);
       if (response.data.status === 200) {
         setUser(null);
         setIsAuthenticated(false);
@@ -192,7 +187,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setTotalPoints(0);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        navigate('/');
+        navigate('/login');
       }
     } catch (error) {
       console.error('Failed to logout:', error);
@@ -213,7 +208,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const hasVoted = useCallback(
     (predictionId: number) => {
-      return userVotes.some((vote) => vote.prediction_id === predictionId);
+      return userVotes.some((vote) => vote?.prediction_id === predictionId);
     },
     [userVotes]
   );
@@ -227,7 +222,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         navigate(`/login?returnTo=/predictions/${id}`);
         return;
       }
-      if (hasVoted(id) || Date.now() >= predictions.find((p) => p.id === id)!.expires_at) {
+      if (hasVoted(id) || Date.now() >= predictions?.find((p) => p?.id === id)!?.expires_at) {
         toast.error('You already voted or this prediction has expired!', {
           style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
         });
@@ -239,7 +234,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setPredictions((prev) =>
             prev.map((p) =>
               p.id === id
-                ? { ...p, upvotes: response.data.data.vote_options.yes, downvotes: response.data.data.vote_options.no }
+                ? { ...p, upvotes: response?.data?.data?.vote_options?.yes, downvotes: response?.data?.data?.vote_options?.no }
                 : p
             )
           );
