@@ -9,12 +9,12 @@ import html2canvas from 'html2canvas';
 const Profile = () => {
     const badgeRef = useRef<HTMLDivElement>(null);
     const [isEditing, setIsEditing] = React.useState(false);
-    const {leaderboardPeriod, leaderboardCategory, predictionCategories, user} = useAuth()
+    const {leaderboardPeriod, leaderboardCategory, predictionCategories, user, pointsHistory} = useAuth()
     const [username, setUsername] = React.useState(user?.username || "Anonymous");
     const [avatar, setAvatar] = React.useState("😎");
     const { userVotes } = useFetchVotes()
     const { leaderboard, currentUser } = useLeaderboard(leaderboardPeriod, leaderboardCategory)
-
+   const totalPointHistory = pointsHistory?.reduce((total, entry) => total + (entry?.points || 0), 0);
     const categoryStats = predictionCategories?.reduce((acc, category) => {
         acc[category] = {
             total: userVotes.filter(vote => vote?.category === category)?.length,
@@ -181,6 +181,9 @@ const getBadges = useCallback(() => {
           <p className="text-sm text-gray-400">
             Total Predictions: {totalPredictions} • Correct: {correctPercentage}% • Points: {totalPoints}
           </p>
+          <p className="text-sm text-gray-400 mb-4">
+        Your points after Gift redemption: {totalPointHistory ?? 0}
+      </p>
           <p className="text-sm text-gray-400">Streak: {streak} days</p>
           <p className="text-sm text-gray-400">Rank: #{myRank}</p>
           {badges.length > 0 && (

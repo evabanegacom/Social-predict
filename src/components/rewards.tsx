@@ -13,8 +13,10 @@ interface Reward {
 }
 
 const Rewards: React.FC = () => {
-  const { user, setUser, userVotes } = useAuth();
+  const { user, setUser, userVotes, pointsHistory } = useAuth();
   const [rewards, setRewards] = useState<Reward[]>([]);
+ const totalPointHistory = pointsHistory?.reduce((total, entry) => total + (entry?.points || 0), 0);
+ console.log({totalPointHistory})
 
   const fetchRewards = useCallback(async () => {
     try {
@@ -54,13 +56,13 @@ const Rewards: React.FC = () => {
         console.log('Reward redeemed:', response.data.data);
         setUser((prev) => prev ? { ...prev, points: response?.data?.data?.points_remaining } : prev);
         setRewards((prev) =>
-          prev.map((r) => (r.id === rewardId ? { ...r, stock: r.stock - 1 } : r))
+          prev.map((r) => (r?.id === rewardId ? { ...r, stock: r?.stock - 1 } : r))
         );
         toast.success(
-          `Reward "${response?.data?.data?.reward?.name}" redeemed! ${response.data.data.code ? `Code: ${response.data.data.code}` : ''}`,
+          `Reward "${response?.data?.data?.reward?.name}" redeemed! ${response.data.data.code ? `Code: ${response?.data?.data.code}` : ''}`,
           {
             style: { background: '#1f2937', color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.2)' },
-            duration: 5000,
+            duration: 20000,
           }
         );
       } else {
@@ -84,6 +86,9 @@ return (
     <div className="mb-8 animate-slide-up">
       <h2 className="text-2xl font-bold text-white mb-4">Rewards Store</h2>
       <p className="text-sm text-gray-400 mb-4">Your Points: {totalPoints ?? 0}</p>
+      <p className="text-sm text-gray-400 mb-4">
+        Your points after Gift redemption: {totalPointHistory ?? 0}
+      </p>
       <div className="space-y-4">
         {rewards.length === 0 ? (
           <p className="text-gray-400">No rewards available at the moment.</p>

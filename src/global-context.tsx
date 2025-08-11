@@ -27,6 +27,7 @@ interface PointEntry {
   result: string;
   points: number;
   awarded_at: number;
+  name?: string; // For rewards
 }
 
 interface AuthContextType {
