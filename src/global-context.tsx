@@ -114,17 +114,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const token = localStorage?.getItem('token')
         if (token) {
           const response = await apiClient.get('/users/me');
-          console.log({response})
           if (response.data.status === 200) {
             setUser(response.data.data);
             setTotalPoints(response.data.data.points || 0);
             setIsAuthenticated(true);
             await getPointsHistory();
           } else {
-            // localStorage.removeItem('token');
-            // localStorage.removeItem('user');
-            // setIsAuthenticated(false);
-            console.log('hello')
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setIsAuthenticated(false);
           }
         }
       } catch (error) {
