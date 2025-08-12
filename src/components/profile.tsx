@@ -99,7 +99,8 @@ const getBadges = useCallback(() => {
               await navigator.share({
                 title: `${username}'s NaWhoKnow Profile`,
                 text: shareText,
-                url: `https://nawhoknow.com/u/${username.replace("@", "")}`,
+                // url: `https://nawhoknow.com/u/${username.replace("@", "")}`,
+                url: 'https://whoknows.netlify.app/',
                 files: [file],
               });
             } else {
