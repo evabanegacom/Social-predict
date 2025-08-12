@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b dark:border-gray-800 shadow-sm sticky top-0 z-50">
+    <nav className="bg-gray-900 border-b dark:border-gray-800 shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
         {/* App Name */}
         <Link to="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
             <>
               <Link
                 to="/login"
-                className="flex items-center gap-1 text-sm text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                className="flex items-center gap-1 text-sm text-gray-200 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 <LogIn size={16} />
                 Sign In
@@ -72,7 +72,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="md:hidden text-gray-700 dark:text-gray-300"
+          className="md:hidden text-gray-300 dark:text-gray-300"
           onClick={toggleMenu}
           aria-label="Toggle menu"
         >
