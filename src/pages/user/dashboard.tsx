@@ -77,6 +77,7 @@ const Dashboard = () => {
     });
   };
 
+  console.log({userVotes})
   return (
     <div className="min-h-screen bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-700 relative overflow-hidden">
       {/* Decorative floating shapes */}
@@ -172,9 +173,16 @@ const Dashboard = () => {
                 <div key={index} className="flex items-center gap-3 text-[#9ca3af]">
                   <CheckCircle className={`w-5 h-5 ${vote.correct ? 'text-[#22c55e]' : 'text-[#ef4444]'}`} />
                   <div>
-                    <p className="text-sm text-white">
-                      {vote.category} Prediction - {vote.correct ? 'Correct' : 'Incorrect'}
-                    </p>
+                  <p className="text-sm text-white">
+  {vote.category} Prediction - {
+    vote?.result == null 
+      ? 'Undecided'
+      : vote?.choice?.toLowerCase() === vote?.result?.toLowerCase()
+        ? 'Correct'
+        : 'Incorrect'
+  }
+</p>
+
                     <p className="text-xs text-[#9ca3af]">
                       {new Date(vote.date).toLocaleDateString()} | {vote.points || 0} points
                     </p>
