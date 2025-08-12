@@ -77,7 +77,6 @@ const Dashboard = () => {
     });
   };
 
-  console.log({userVotes})
   return (
     <div className="min-h-screen bg-gradient-to-tr from-gray-900 via-gray-800 to-gray-700 relative overflow-hidden">
       {/* Decorative floating shapes */}
@@ -184,7 +183,7 @@ const Dashboard = () => {
 </p>
 
                     <p className="text-xs text-[#9ca3af]">
-                      {new Date(vote.date).toLocaleDateString()} | {vote.points || 0} points
+                      {new Date(vote?.voted_at).toLocaleDateString()} | {vote.points || 0} points
                     </p>
                   </div>
                 </div>

@@ -18,7 +18,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"main" | "spotlight" | "activity">("main");
   const { userVotes } = useFetchVotes();
   const totalPoints = userVotes?.reduce((total, vote) => total + (vote.points || 0), 0);
-
+  const [ showProfile, setShowProfile ] = useState(false);
   const predictionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -83,10 +83,21 @@ export default function Home() {
 
         {/* Show content on mobile tabs */}
         {activeTab === "main" && (
-          <div className="space-y-8">
-            <Profile />
-            {totalPoints > 49 && <LeaderBoard />}
-            {totalPoints > 49 && <Rewards />}
+          <div className="">
+            <div className="flex justify-center items-center mb-4">
+              <button
+                onClick={() => setShowProfile(!showProfile)}
+                className="cursor-pointer text-sm text-blue-400 hover:text-blue-300"
+              >
+                {showProfile ? "Hide Profile" : "Show Profile"}
+              </button>
+            </div>
+            {showProfile && (
+              <Profile />
+            )}
+            {/* <Profile /> */}
+            {totalPoints > 49 ? <LeaderBoard /> : null}
+            {totalPoints > 49 ? <Rewards /> : null}
             <div ref={predictionsRef}>
               <Predictions />
             </div>

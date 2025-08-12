@@ -7,7 +7,6 @@ const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout, theme, toggleTheme } = useAuth();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-console.log({user})
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
@@ -20,7 +19,7 @@ console.log({user})
 
         {/* Desktop Controls */}
         <div className="hidden md:flex items-center gap-4">
-          {isAuthenticated 
+          {/* {isAuthenticated 
           &&
           <Link
   to={`/dashboard/${user?.username || ''}`}
@@ -33,7 +32,7 @@ console.log({user})
   Dashboard
 </Link>
 
-          }
+          } */}
           <button
             onClick={toggleTheme}
             className="text-gray-700 dark:text-gray-300 hover:text-yellow-500 dark:hover:text-yellow-300 transition"
@@ -45,7 +44,17 @@ console.log({user})
             <>
               <div className="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm text-gray-800 dark:text-gray-100">
                 <User size={16} />
-                {user?.username}
+                <Link
+              to={`/dashboard/${user?.username || ''}`}
+              onClick={() => setIsMenuOpen(false)}
+              className={`cursor-pointer text-sm font-medium ${
+                location.pathname === `${user?.username ? `/dashboard/${user?.username}` : '/dashboard'}`
+                  ? 'text-blue-400'
+                  : 'text-gray-300'
+              } hover:text-blue-300`}
+            >
+              {user?.username}
+            </Link>
               </div>
               <button
                 onClick={logout}
@@ -88,7 +97,7 @@ console.log({user})
       {isMenuOpen && (
         <div className="md:hidden bg-gray-900 border-t border-gray-800 py-4 px-4 animate-slide-in-top">
           <div className="flex flex-col gap-4">
-            <Link
+            {/* <Link
               to={`/dashboard/${user?.username || ''}`}
               onClick={() => setIsMenuOpen(false)}
               className={`text-sm font-medium ${
@@ -98,7 +107,7 @@ console.log({user})
               } hover:text-blue-300`}
             >
               Dashboard
-            </Link>
+            </Link> */}
             <button
               onClick={() => {
                 toggleTheme();
@@ -111,9 +120,19 @@ console.log({user})
             </button>
             {isAuthenticated ? (
               <>
-                <div className="flex items-center gap-2 text-sm text-gray-100">
+                <div className="flex items-center gap-2 text-sm text-gray-100  cursor-pointer">
                   <User size={16} />
-                  {user?.username}
+                  <Link
+              to={`/dashboard/${user?.username || ''}`}
+              onClick={() => setIsMenuOpen(false)}
+              className={`cursor-pointer text-sm font-medium ${
+                location.pathname === `${user?.username ? `/dashboard/${user?.username}` : '/dashboard'}`
+                  ? 'text-blue-400'
+                  : 'text-gray-300'
+              } hover:text-blue-300`}
+            >
+              {user?.username}
+            </Link>
                 </div>
                 <button
                   onClick={() => {
