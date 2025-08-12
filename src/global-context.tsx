@@ -17,6 +17,7 @@ interface User {
   points?: number;
   streak?: number;
   admin?: boolean;
+  avatar?: string;
 }
 
 interface PointEntry {

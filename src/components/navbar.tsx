@@ -7,7 +7,7 @@ const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout, theme, toggleTheme } = useAuth();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+console.log({user})
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   return (
@@ -20,16 +20,20 @@ const Navbar: React.FC = () => {
 
         {/* Desktop Controls */}
         <div className="hidden md:flex items-center gap-4">
-          {/* <Link
-            to="/dashboard"
-            className={`text-sm font-medium ${
-              location.pathname === '/dashboard'
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-700 dark:text-gray-300'
-            } hover:text-blue-500 dark:hover:text-blue-300`}
-          >
-            Dashboard
-          </Link> */}
+          {isAuthenticated 
+          &&
+          <Link
+  to={`/dashboard/${user?.username || ''}`}
+  className={`text-sm font-medium ${
+    location.pathname === `/dashboard/${user?.username}` 
+      ? 'text-blue-600 dark:text-blue-400' 
+      : 'text-gray-700 dark:text-gray-300'
+  } hover:text-blue-500 dark:hover:text-blue-300`}
+>
+  Dashboard
+</Link>
+
+          }
           <button
             onClick={toggleTheme}
             className="text-gray-700 dark:text-gray-300 hover:text-yellow-500 dark:hover:text-yellow-300 transition"
@@ -84,17 +88,17 @@ const Navbar: React.FC = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-gray-900 border-t border-gray-800 py-4 px-4 animate-slide-in-top">
           <div className="flex flex-col gap-4">
-            {/* <Link
-              to="/dashboard"
+            <Link
+              to={`/dashboard/${user?.username || ''}`}
               onClick={() => setIsMenuOpen(false)}
               className={`text-sm font-medium ${
-                location.pathname === '/dashboard'
+                location.pathname === `${user?.username ? `/dashboard/${user?.username}` : '/dashboard'}`
                   ? 'text-blue-400'
                   : 'text-gray-300'
               } hover:text-blue-300`}
             >
               Dashboard
-            </Link> */}
+            </Link>
             <button
               onClick={() => {
                 toggleTheme();
