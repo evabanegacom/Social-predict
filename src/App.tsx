@@ -9,6 +9,7 @@ const SignIn = lazy(() => import('./pages/auth/login'));
 const Home = lazy(() => import('./pages/auth/home'));
 const ResolvePrediction = lazy(() => import('./pages/admin/resolve-predictions'));
 const Dashboard = lazy(() => import('./pages/user/dashboard'));
+const PredictionDetails = lazy(() => import('./pages/prediction/prediction-details'));
 // const Dashboard = () => <div>Dashboard (Placeholder)</div>;
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/dashboard/:username" element={<Dashboard />} />
             <Route path='/resolve' element={<ResolvePrediction />} />
+            <Route path="/prediction/:id" element={<PredictionDetails />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
         </Suspense>

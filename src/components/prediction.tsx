@@ -3,7 +3,7 @@ import type { Category, Filter, Tab } from '../lib/types';
 import { useAuth } from '../global-context';
 import { VoteOption } from '../lib/utils';
 import { Check, X } from 'lucide-react';
-import PredictionForm from './prediction-form';
+import { Link } from 'react-router-dom';
 
 const Predictions: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('active');
@@ -136,9 +136,12 @@ const Predictions: React.FC = () => {
           >
             <p className="text-lg font-medium text-white">{pred.text}</p>
             <p className="text-sm text-gray-400">{pred.user}</p>
-            <p className="text-xs text-gray-500 mt-1">
-              {pred.category} • {pred.result ? `Resolved: ${pred.result}` : getTimeLeft(pred.expires_at)}
-            </p>
+            <p className="text-xs text-gray-500 mt-1 flex items-center gap-2">
+  {pred.category} • {pred.result ? `Resolved: ${pred.result}` : getTimeLeft(pred.expires_at)} •{' '}
+  <Link to={`/prediction/${pred.id}`} className="text-blue-600 dark:text-blue-400 hover:underline">
+    View
+  </Link>
+</p>
             <div className="mt-3 flex items-center gap-4">
               <button
                 onClick={() => handleVote(pred.id, VoteOption.Yes)}

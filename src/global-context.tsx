@@ -80,6 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getPredictions = async () => {
     try {
       const response = await apiClient.get('/predictions');
+      console.log('Predictions response:', response);
       if (response.status === 200) {
         setPredictions(response.data.data);
         return response.data.data;
